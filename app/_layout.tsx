@@ -4,7 +4,12 @@ import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
-import { Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
+import {
+  Nunito_400Regular,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+} from '@expo-google-fonts/nunito';
 import { initializeAuth, useAuthStore } from '@/store/authStore';
 import '../global.css';
 
@@ -15,8 +20,10 @@ export default function RootLayout() {
   useFrameworkReady();
 
   const [fontsLoaded, fontError] = useFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Bold': Inter_700Bold,
+    'Nunito-Regular': Nunito_400Regular,
+    'Nunito-SemiBold': Nunito_600SemiBold,
+    'Nunito-Bold': Nunito_700Bold,
+    'Nunito-ExtraBold': Nunito_800ExtraBold,
   });
 
   const { initialized } = useAuthStore();
@@ -39,12 +46,30 @@ export default function RootLayout() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#F8F9FA' },
+          animation: 'fade',
+          animationDuration: 200,
+        }}>
+        <Stack.Screen
+          name="(auth)"
+          options={{
+            headerShown: false,
+            animation: 'slide_from_bottom',
+          }}
+        />
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </>
   );
 }

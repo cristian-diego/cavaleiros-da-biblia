@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  Image, 
-  SafeAreaView 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import useUserStore from '@/store/userStore';
 import useMissionStore from '@/store/missionStore';
@@ -19,30 +20,30 @@ import { router } from 'expo-router';
 export default function DashboardScreen() {
   const { user } = useUserStore();
   const { missions, resetDailyMissions } = useMissionStore();
-  
+
   // Get daily verse
   const dailyVerse = getDailyVerse();
-  
+
   // Calculate XP percentage for level progress
   const calculateLevelProgress = () => {
     if (!user) return 0;
-    
+
     const currentLevelXp = (user.level - 1) * 100;
     const nextLevelXp = user.level * 100;
     const xpInCurrentLevel = user.xp - currentLevelXp;
     const xpNeededForNextLevel = nextLevelXp - currentLevelXp;
-    
+
     return (xpInCurrentLevel / xpNeededForNextLevel) * 100;
   };
-  
+
   // Calculate completed missions
-  const completedMissions = missions.filter(m => m.completed).length;
-  
+  const completedMissions = missions.filter((m) => m.completed).length;
+
   // Reset daily missions if needed
   useEffect(() => {
     resetDailyMissions();
   }, []);
-  
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -50,22 +51,19 @@ export default function DashboardScreen() {
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.header}>
           <View style={styles.userInfo}>
-            <Image
-              source={{ uri: user.avatar }}
-              style={styles.avatar}
-            />
+            <Image source={{ uri: user.avatar }} style={styles.avatar} />
             <View>
               <Text style={styles.greeting}>Olá, {user.name}!</Text>
               <Text style={styles.level}>Nível {user.level}</Text>
             </View>
           </View>
-          
+
           <View style={styles.xpContainer}>
             <View style={styles.xpLabelContainer}>
               <Text style={styles.xpLabel}>XP</Text>
@@ -74,35 +72,37 @@ export default function DashboardScreen() {
             <ProgressBar progress={calculateLevelProgress()} />
           </View>
         </View>
-        
+
         <VerseCard verse={dailyVerse} />
-        
+
         <View style={styles.statsContainer}>
           <Text style={styles.sectionTitle}>Suas Missões de Hoje</Text>
-          
+
           <Card style={styles.statsCard}>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{completedMissions}</Text>
               <Text style={styles.statLabel}>Missões Completas</Text>
             </View>
-            
+
             <View style={styles.divider} />
-            
+
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{missions.length - completedMissions}</Text>
               <Text style={styles.statLabel}>Restantes</Text>
             </View>
-            
+
             <View style={styles.divider} />
-            
+
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>{missions.reduce((acc, mission) => {
-                return mission.completed ? acc + mission.xpReward : acc;
-              }, 0)}</Text>
+              <Text style={styles.statValue}>
+                {missions.reduce((acc, mission) => {
+                  return mission.completed ? acc + mission.xpReward : acc;
+                }, 0)}
+              </Text>
               <Text style={styles.statLabel}>XP Ganho</Text>
             </View>
           </Card>
-          
+
           <Button
             title="Ver Missões"
             variant="secondary"
