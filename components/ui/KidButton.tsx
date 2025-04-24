@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'fun';
 type ButtonSize = 'sm' | 'md' | 'lg';
+type ThemeType = 'kid-bible' | 'kid-adventurers';
 
 interface KidButtonProps extends TouchableOpacityProps {
   title: string;
@@ -22,18 +23,33 @@ interface KidButtonProps extends TouchableOpacityProps {
   fullWidth?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
-  theme?: 'kid' | 'teen' | 'classic';
+  theme?: ThemeType;
   animated?: boolean;
 }
 
-const themes = {
-  kid: {
+// Brand themes with specific color palettes
+const themes: Record<
+  ThemeType,
+  {
+    colors: Record<ButtonVariant, [string, string, string]>;
+    fonts: {
+      regular: string;
+      bold: string;
+    };
+    borderRadius: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
+  }
+> = {
+  'kid-bible': {
     colors: {
-      primary: ['#4A90E2', '#357ABD', '#2C3E50'],
-      secondary: ['#FFD700', '#FFC107', '#FFB300'],
-      success: ['#2ECC71', '#27AE60', '#219A52'],
-      danger: ['#E74C3C', '#C0392B', '#962E23'],
-      fun: ['#9B59B6', '#8E44AD', '#6C3483'],
+      primary: ['#4A90E2', '#357ABD', '#2C3E50'] as [string, string, string],
+      secondary: ['#FFD700', '#FFC107', '#FFB300'] as [string, string, string],
+      success: ['#2ECC71', '#27AE60', '#219A52'] as [string, string, string],
+      danger: ['#E74C3C', '#C0392B', '#962E23'] as [string, string, string],
+      fun: ['#9B59B6', '#8E44AD', '#6C3483'] as [string, string, string],
     },
     fonts: {
       regular: 'Nunito-Regular',
@@ -45,40 +61,22 @@ const themes = {
       lg: 20,
     },
   },
-  teen: {
+  'kid-adventurers': {
     colors: {
-      primary: ['#3498DB', '#2980B9', '#1F6DA5'],
-      secondary: ['#F1C40F', '#D4AC0D', '#B7950B'],
-      success: ['#2ECC71', '#27AE60', '#219A52'],
-      danger: ['#E74C3C', '#C0392B', '#962E23'],
-      fun: ['#9B59B6', '#8E44AD', '#6C3483'],
+      primary: ['#6B46C1', '#553C9A', '#44337A'] as [string, string, string], // Deep purple
+      secondary: ['#9F7AEA', '#805AD5', '#6B46C1'] as [string, string, string], // Bright purple
+      success: ['#48BB78', '#38A169', '#2F855A'] as [string, string, string], // Forest green
+      danger: ['#F56565', '#E53E3E', '#C53030'] as [string, string, string], // Vibrant red
+      fun: ['#ED64A6', '#D53F8C', '#B83280'] as [string, string, string], // Magenta
     },
     fonts: {
-      regular: 'Inter-Regular',
-      bold: 'Inter-Bold',
+      regular: 'Nunito-Regular',
+      bold: 'Nunito-Bold',
     },
     borderRadius: {
-      sm: 8,
-      md: 12,
-      lg: 16,
-    },
-  },
-  classic: {
-    colors: {
-      primary: ['#2C3E50', '#34495E', '#2C3E50'],
-      secondary: ['#95A5A6', '#7F8C8D', '#6C7A7D'],
-      success: ['#27AE60', '#219A52', '#1E8449'],
-      danger: ['#C0392B', '#962E23', '#7B241C'],
-      fun: ['#8E44AD', '#6C3483', '#5B2C6F'],
-    },
-    fonts: {
-      regular: 'Roboto-Regular',
-      bold: 'Roboto-Bold',
-    },
-    borderRadius: {
-      sm: 4,
-      md: 8,
-      lg: 12,
+      sm: 16,
+      md: 20,
+      lg: 24, // More rounded corners for adventurous feel
     },
   },
 };
@@ -91,13 +89,12 @@ const KidButton: React.FC<KidButtonProps> = ({
   fullWidth = false,
   style,
   textStyle,
-  theme = 'kid',
+  theme = 'kid-bible',
   animated = true,
   disabled = false,
   ...props
 }) => {
   const [scaleAnim] = React.useState(new Animated.Value(1));
-
   const currentTheme = themes[theme];
 
   React.useEffect(() => {
@@ -144,29 +141,29 @@ const KidButton: React.FC<KidButtonProps> = ({
     }
   };
 
-  const buttonStyles = [
-    styles.button,
-    {
-      borderRadius: currentTheme.borderRadius[size],
-      opacity: disabled ? 0.6 : 1,
-      width: fullWidth ? '100%' : undefined,
-      transform: [{ scale: scaleAnim }],
-    },
-    style,
-  ];
+  const buttonStyles: ViewStyle = {
+    ...styles.button,
+    borderRadius: currentTheme.borderRadius[size],
+    opacity: disabled ? 0.6 : 1,
+    width: fullWidth ? '100%' : 'auto',
+    transform: [{ scale: scaleAnim }],
+    ...style,
+  };
 
-  const textStyles = [
-    styles.text,
-    {
-      fontSize: getButtonSize().fontSize,
-      fontFamily: currentTheme.fonts.bold,
-    },
-    textStyle,
-  ];
+  const textStyles: TextStyle = {
+    ...styles.text,
+    fontSize: getButtonSize().fontSize,
+    fontFamily: currentTheme.fonts.bold,
+    ...textStyle,
+  };
 
   return (
     <Animated.View style={buttonStyles}>
-      <TouchableOpacity disabled={disabled || loading} activeOpacity={0.8} {...props}>
+      <TouchableOpacity
+        style={styles.touchable}
+        disabled={disabled || loading}
+        activeOpacity={0.8}
+        {...props}>
         <LinearGradient
           colors={currentTheme.colors[variant]}
           start={{ x: 0, y: 0 }}
@@ -200,6 +197,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  touchable: {
+    width: '100%',
   },
   gradient: {
     alignItems: 'center',
