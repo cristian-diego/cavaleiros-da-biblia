@@ -12,10 +12,12 @@ import {
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import useUserStore from '@/store/userStore';
 import Button from '@/components/ui/Button';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react-native';
 
 export default function LoginScreen() {
+  const { setUser } = useUserStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -33,12 +35,37 @@ export default function LoginScreen() {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profile) {
+          setUser({
+            id: profile.id,
+            name: profile.name,
+            avatar: profile.avatar_url,
+            xp: profile.xp || 0,
+            level: profile.level || 1,
+            attributes: {
+              faith: profile.faith || 1,
+              boldness: profile.boldness || 1,
+              wisdom: profile.wisdom || 1,
+            },
+            createdAt: profile.created_at,
+            updatedAt: profile.updated_at,
+          });
+        }
+      }
 
       router.replace('/(tabs)');
     } catch (err: any) {
@@ -52,15 +79,13 @@ export default function LoginScreen() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Image
-            source={{ uri: 'https://images.pexels.com/photos/4240498/pexels-photo-4240498.jpeg?auto=compress&cs=tinysrgb&w=300' }}
+            source={{
+              uri: 'https://images.pexels.com/photos/4240498/pexels-photo-4240498.jpeg?auto=compress&cs=tinysrgb&w=300',
+            }}
             style={styles.logo}
           />
           <Text style={styles.title}>Guardiões da Verdade</Text>
@@ -68,9 +93,7 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.form}>
-          {error && (
-            <Text style={styles.errorText}>{error}</Text>
-          )}
+          {error && <Text style={styles.errorText}>{error}</Text>}
 
           <View style={styles.inputContainer}>
             <Mail size={20} color="#8B877D" style={styles.inputIcon} />
@@ -93,10 +116,7 @@ export default function LoginScreen() {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setShowPassword(!showPassword)}
-            >
+            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? (
                 <EyeOff size={20} color="#8B877D" />
               ) : (
@@ -108,8 +128,7 @@ export default function LoginScreen() {
           <View style={styles.optionsRow}>
             <TouchableOpacity
               style={styles.checkboxContainer}
-              onPress={() => setRememberMe(!rememberMe)}
-            >
+              onPress={() => setRememberMe(!rememberMe)}>
               <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
               <Text style={styles.checkboxLabel}>Lembrar-me</Text>
             </TouchableOpacity>
@@ -136,7 +155,9 @@ export default function LoginScreen() {
           <View style={styles.socialButtons}>
             <TouchableOpacity style={styles.socialButton}>
               <Image
-                source={{ uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png' }}
+                source={{
+                  uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+                }}
                 style={styles.socialIcon}
                 resizeMode="contain"
               />
@@ -144,7 +165,9 @@ export default function LoginScreen() {
 
             <TouchableOpacity style={styles.socialButton}>
               <Image
-                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png' }}
+                source={{
+                  uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png',
+                }}
                 style={styles.socialIcon}
                 resizeMode="contain"
               />

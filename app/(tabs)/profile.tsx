@@ -1,13 +1,5 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  Image, 
-  SafeAreaView, 
-  ScrollView, 
-  Alert 
-} from 'react-native';
+import { View, Text, StyleSheet, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
 import useUserStore from '@/store/userStore';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -15,13 +7,8 @@ import { router } from 'expo-router';
 
 export default function ProfileScreen() {
   const { user, reset } = useUserStore();
-  
-  const handleReset = () => {
-    reset();
-    router.replace('/onboarding');
-    return;
 
-    
+  const handleReset = () => {
     Alert.alert(
       'Reiniciar Progresso',
       'Tem certeza que deseja reiniciar todo o seu progresso? Esta ação não pode ser desfeita.',
@@ -41,7 +28,7 @@ export default function ProfileScreen() {
       ]
     );
   };
-  
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -49,53 +36,48 @@ export default function ProfileScreen() {
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView 
+      <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Image
-            source={{ uri: user.avatar }}
-            style={styles.avatar}
-          />
+          <Image source={{ uri: user.avatar }} style={styles.avatar} />
           <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.level}>Nível {user.level} • {user.xp} XP</Text>
+          <Text style={styles.level}>
+            Nível {user.level} • {user.xp} XP
+          </Text>
         </View>
-        
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sobre o App</Text>
-          
+
           <Card style={styles.card}>
             <Text style={styles.cardTitle}>Guardiões da Verdade</Text>
             <Text style={styles.cardText}>
-              Bem-vindo ao Guardiões da Verdade, um app cristão gamificado para crianças e famílias! 
+              Bem-vindo ao Guardiões da Verdade, um app cristão gamificado para crianças e famílias!
               Complete missões diárias, ganhe XP, e cresça em fé, coragem e sabedoria.
             </Text>
           </Card>
-          
+
           <Card style={styles.card}>
             <Text style={styles.cardTitle}>Como Ganhar XP</Text>
             <Text style={styles.cardText}>
-              • Complete missões diárias{'\n'}
-              • Leia a Bíblia regularmente{'\n'}
-              • Ore diariamente{'\n'}
-              • Participe do culto familiar
+              • Complete missões diárias{'\n'}• Leia a Bíblia regularmente{'\n'}• Ore diariamente
+              {'\n'}• Participe do culto familiar
             </Text>
           </Card>
-          
+
           <Card style={styles.card}>
             <Text style={styles.cardTitle}>Versão</Text>
             <Text style={styles.cardText}>
-              Versão 1.0.0 (MVP){'\n'}
-              © 2025 Guardiões da Verdade
+              Versão 1.0.0 (MVP){'\n'}© 2025 Guardiões da Verdade
             </Text>
           </Card>
         </View>
-        
+
         <View style={styles.buttonContainer}>
           <Button
             title="Reiniciar Progresso"

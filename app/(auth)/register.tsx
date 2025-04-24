@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import useUserStore from '@/store/userStore';
 import Button from '@/components/ui/Button';
 import { Eye, EyeOff, Mail, Lock, User, ChevronLeft } from 'lucide-react-native';
 import AvatarSelect from '@/components/ui/AvatarSelect';
@@ -28,6 +29,7 @@ interface ValidationErrors {
 }
 
 export default function RegisterScreen() {
+  const { setUser } = useUserStore();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,7 +82,7 @@ export default function RegisterScreen() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -92,6 +94,40 @@ export default function RegisterScreen() {
       });
 
       if (error) throw error;
+
+      if (data.user) {
+        // Create profile in profiles table
+        const { error: profileError } = await supabase.from('profiles').insert([
+          {
+            id: data.user.id,
+            name,
+            avatar_url: selectedAvatar?.image,
+            xp: 0,
+            level: 1,
+            faith: 1,
+            boldness: 1,
+            wisdom: 1,
+          },
+        ]);
+
+        if (profileError) throw profileError;
+
+        // Set user in store
+        setUser({
+          id: data.user.id,
+          name,
+          avatar: selectedAvatar?.image || '',
+          xp: 0,
+          level: 1,
+          attributes: {
+            faith: 1,
+            boldness: 1,
+            wisdom: 1,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
 
       router.replace('/(tabs)');
     } catch (err: any) {
@@ -108,12 +144,8 @@ export default function RegisterScreen() {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Link href="/login" asChild>
             <TouchableOpacity style={styles.backButton}>
@@ -133,9 +165,7 @@ export default function RegisterScreen() {
               value={name}
               onChangeText={setName}
             />
-            {errors.name && (
-              <Text style={styles.errorText}>{errors.name}</Text>
-            )}
+            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -148,9 +178,7 @@ export default function RegisterScreen() {
               autoCapitalize="none"
               keyboardType="email-address"
             />
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -162,19 +190,14 @@ export default function RegisterScreen() {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setShowPassword(!showPassword)}
-            >
+            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? (
                 <EyeOff size={20} color="#8B877D" />
               ) : (
                 <Eye size={20} color="#8B877D" />
               )}
             </TouchableOpacity>
-            {errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            )}
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -188,8 +211,7 @@ export default function RegisterScreen() {
             />
             <TouchableOpacity
               style={styles.eyeIcon}
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
               {showConfirmPassword ? (
                 <EyeOff size={20} color="#8B877D" />
               ) : (
@@ -206,24 +228,18 @@ export default function RegisterScreen() {
             selectedAvatar={selectedAvatar?.id || null}
             onSelect={setSelectedAvatar}
           />
-          {errors.avatar && (
-            <Text style={styles.errorText}>{errors.avatar}</Text>
-          )}
+          {errors.avatar && <Text style={styles.errorText}>{errors.avatar}</Text>}
 
           <TouchableOpacity
             style={styles.termsContainer}
-            onPress={() => setAcceptedTerms(!acceptedTerms)}
-          >
+            onPress={() => setAcceptedTerms(!acceptedTerms)}>
             <View style={[styles.checkbox, acceptedTerms && styles.checkboxChecked]} />
             <Text style={styles.termsText}>
-              Li e aceito os{' '}
-              <Text style={styles.termsLink}>Termos de Uso</Text> e a{' '}
+              Li e aceito os <Text style={styles.termsLink}>Termos de Uso</Text> e a{' '}
               <Text style={styles.termsLink}>Política de Privacidade</Text>
             </Text>
           </TouchableOpacity>
-          {errors.terms && (
-            <Text style={styles.errorText}>{errors.terms}</Text>
-          )}
+          {errors.terms && <Text style={styles.errorText}>{errors.terms}</Text>}
 
           <Button
             title="Criar Conta"

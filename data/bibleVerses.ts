@@ -7,55 +7,55 @@ export interface BibleVerse {
 // Sample Bible verses for kids/families
 export const bibleVerses: BibleVerse[] = [
   {
-    reference: "Joshua 1:9",
-    text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the LORD your God will be with you wherever you go.",
-    theme: "courage"
+    reference: 'Josué 1:9',
+    text: 'Seja forte e corajoso! Não se apavore, nem desanime, pois o Senhor, o seu Deus, estará com você por onde você andar.',
+    theme: 'coragem',
   },
   {
-    reference: "Philippians 4:13",
-    text: "I can do all things through Christ who strengthens me.",
-    theme: "strength"
+    reference: 'Filipenses 4:13',
+    text: 'Tudo posso naquele que me fortalece.',
+    theme: 'força',
   },
   {
-    reference: "Psalm 56:3",
-    text: "When I am afraid, I put my trust in you.",
-    theme: "trust"
+    reference: 'Salmos 56:3',
+    text: 'Quando estou com medo, confio em ti.',
+    theme: 'confiança',
   },
   {
-    reference: "Psalm 119:105",
-    text: "Your word is a lamp for my feet, a light on my path.",
-    theme: "guidance"
+    reference: 'Salmos 119:105',
+    text: 'A tua palavra é lâmpada que ilumina os meus passos e luz que clareia o meu caminho.',
+    theme: 'orientação',
   },
   {
-    reference: "Romans 8:28",
-    text: "And we know that in all things God works for the good of those who love him, who have been called according to his purpose.",
-    theme: "purpose"
+    reference: 'Romanos 8:28',
+    text: 'Sabemos que Deus age em todas as coisas para o bem daqueles que o amam, dos que foram chamados de acordo com o seu propósito.',
+    theme: 'propósito',
   },
   {
-    reference: "Proverbs 3:5-6",
-    text: "Trust in the LORD with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.",
-    theme: "guidance"
+    reference: 'Provérbios 3:5-6',
+    text: 'Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento; reconheça o Senhor em todos os seus caminhos, e ele endireitará as suas veredas.',
+    theme: 'orientação',
   },
   {
-    reference: "1 John 4:19",
-    text: "We love because he first loved us.",
-    theme: "love"
+    reference: '1 João 4:19',
+    text: 'Nós amamos porque ele nos amou primeiro.',
+    theme: 'amor',
   },
   {
-    reference: "Matthew 28:20",
-    text: "And surely I am with you always, to the very end of the age.",
-    theme: "presence"
+    reference: 'Mateus 28:20',
+    text: 'E eu estarei sempre com vocês, até o fim dos tempos.',
+    theme: 'presença',
   },
   {
-    reference: "1 Corinthians 16:13-14",
-    text: "Be on your guard; stand firm in the faith; be courageous; be strong. Do everything in love.",
-    theme: "courage"
+    reference: '1 Coríntios 16:13-14',
+    text: 'Estejam vigilantes, mantenham-se firmes na fé, sejam homens de coragem, sejam fortes. Façam tudo com amor.',
+    theme: 'coragem',
   },
   {
-    reference: "Isaiah 41:10",
-    text: "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.",
-    theme: "strength"
-  }
+    reference: 'Isaías 41:10',
+    text: 'Não tenha medo, pois estou com você; não se desespere, pois eu sou o seu Deus. Eu o fortalecerei e o ajudarei; eu o segurarei com a minha mão direita vitoriosa.',
+    theme: 'força',
+  },
 ];
 
 export const getRandomVerse = (): BibleVerse => {
@@ -65,7 +65,9 @@ export const getRandomVerse = (): BibleVerse => {
 
 export const getDailyVerse = (): BibleVerse => {
   const today = new Date();
-  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+  const dayOfYear = Math.floor(
+    (today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
+  );
   const verseIndex = dayOfYear % bibleVerses.length;
   return bibleVerses[verseIndex];
 };

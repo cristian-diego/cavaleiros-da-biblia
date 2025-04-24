@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  SafeAreaView, 
-  Alert 
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Alert } from 'react-native';
 import useMissionStore from '@/store/missionStore';
 import useUserStore from '@/store/userStore';
 import MissionItem from '@/components/ui/MissionItem';
@@ -16,28 +9,28 @@ import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 
 export default function MissionsScreen() {
   const { missions, completeMission, resetMissions } = useMissionStore();
-  const { user, addXp } = useUserStore();
+  const { user, addXp, reset } = useUserStore();
   const [showingReward, setShowingReward] = useState<Mission | null>(null);
-  
+
   const handleCompleteMission = (id: string) => {
-    const mission = missions.find(m => m.id === id);
+    const mission = missions.find((m) => m.id === id);
     if (!mission) return;
-    
+
     // Mark mission as completed
     completeMission(id);
-    
+
     // Award XP
     addXp(mission.xpReward, mission.attribute);
-    
+
     // Show reward notification
     setShowingReward(mission);
-    
+
     // Hide reward notification after 2 seconds
     setTimeout(() => {
       setShowingReward(null);
     }, 2000);
   };
-  
+
   const handleResetMissions = () => {
     Alert.alert(
       'Reiniciar Missões',
@@ -54,9 +47,9 @@ export default function MissionsScreen() {
       ]
     );
   };
-  
-  const allCompleted = missions.every(mission => mission.completed);
-  
+
+  const allCompleted = missions.every((mission) => mission.completed);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -68,20 +61,15 @@ export default function MissionsScreen() {
             </Text>
           )}
         </View>
-        
+
         <ScrollView
           style={styles.missionsList}
           contentContainerStyle={styles.missionsContent}
-          showsVerticalScrollIndicator={false}
-        >
+          showsVerticalScrollIndicator={false}>
           {missions.map((mission) => (
-            <MissionItem
-              key={mission.id}
-              mission={mission}
-              onComplete={handleCompleteMission}
-            />
+            <MissionItem key={mission.id} mission={mission} onComplete={handleCompleteMission} />
           ))}
-          
+
           <Button
             title="Reiniciar Missões"
             variant="outline"
@@ -89,20 +77,21 @@ export default function MissionsScreen() {
             style={styles.resetButton}
           />
         </ScrollView>
-        
+
         {/* XP Reward Notification */}
         {showingReward && (
-          <Animated.View 
+          <Animated.View
             entering={FadeInDown.duration(300)}
             exiting={FadeOutUp.duration(300)}
-            style={styles.rewardContainer}
-          >
-            <Text style={styles.rewardText}>
-              +{showingReward.xpReward} XP
-            </Text>
+            style={styles.rewardContainer}>
+            <Text style={styles.rewardText}>+{showingReward.xpReward} XP</Text>
             <Text style={styles.attributeText}>
-              +1 {showingReward.attribute === 'faith' ? 'Fé' : 
-                  showingReward.attribute === 'boldness' ? 'Coragem' : 'Sabedoria'}
+              +1{' '}
+              {showingReward.attribute === 'faith'
+                ? 'Fé'
+                : showingReward.attribute === 'boldness'
+                  ? 'Coragem'
+                  : 'Sabedoria'}
             </Text>
           </Animated.View>
         )}
