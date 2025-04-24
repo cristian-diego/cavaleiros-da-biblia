@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   Image,
@@ -138,75 +137,92 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-[#F5F1EB]"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
+      <ScrollView
+        className="flex-1 pb-6"
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}>
+        <View className="items-center pb-10 pt-[60px]">
           <Link href="/login" asChild>
-            <TouchableOpacity style={styles.backButton}>
+            <TouchableOpacity className="absolute left-6 top-6">
               <ChevronLeft size={24} color="#2C3E85" />
             </TouchableOpacity>
           </Link>
-          <Text style={styles.title}>Criar Conta</Text>
-          <Text style={styles.subtitle}>Junte-se à nossa comunidade!</Text>
+          <Text className="mb-2 text-2xl font-bold text-[#2C3E85]">Criar Conta</Text>
+          <Text className="text-lg text-[#8F9779]">Junte-se à nossa comunidade!</Text>
         </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <User size={20} color="#8B877D" style={styles.inputIcon} />
+        <View className="px-6">
+          <View className="mb-4">
             <TextInput
-              style={styles.input}
+              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 text-base text-gray-800"
               placeholder="Nome completo"
               value={name}
               onChangeText={setName}
             />
-            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+            <View className="absolute left-3 top-3">
+              <User size={20} color="#8B877D" />
+            </View>
+            {errors.name && <Text className="mt-1 text-sm text-red-600">{errors.name}</Text>}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Mail size={20} color="#8B877D" style={styles.inputIcon} />
+          <View className="relative mb-4">
             <TextInput
-              style={styles.input}
+              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 text-base text-gray-800"
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
             />
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
+            <View className="absolute left-3 top-3">
+              <Mail size={20} color="#8B877D" />
+            </View>
+            {errors.email && <Text className="mt-1 text-sm text-red-600">{errors.email}</Text>}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Lock size={20} color="#8B877D" style={styles.inputIcon} />
+          <View className="mb-4">
             <TextInput
-              style={[styles.input, { paddingRight: 50 }]}
+              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 pr-12 text-base text-gray-800"
               placeholder="Senha"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
+            <View className="absolute left-3 top-3">
+              <Lock size={20} color="#8B877D" />
+            </View>
+
+            <TouchableOpacity
+              className="absolute right-3 top-3"
+              onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? (
                 <EyeOff size={20} color="#8B877D" />
               ) : (
                 <Eye size={20} color="#8B877D" />
               )}
             </TouchableOpacity>
-            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+            {errors.password && (
+              <Text className="mt-1 text-sm text-red-600">{errors.password}</Text>
+            )}
           </View>
 
-          <View style={styles.inputContainer}>
-            <Lock size={20} color="#8B877D" style={styles.inputIcon} />
+          <View className=" mb-4">
             <TextInput
-              style={[styles.input, { paddingRight: 50 }]}
+              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 pr-12 text-base text-gray-800"
               placeholder="Confirmar senha"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry={!showConfirmPassword}
             />
+            <View className="absolute left-3 top-3">
+              <Lock size={20} color="#8B877D" />
+            </View>
             <TouchableOpacity
-              style={styles.eyeIcon}
+              className="absolute right-3 top-3"
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
               {showConfirmPassword ? (
                 <EyeOff size={20} color="#8B877D" />
@@ -215,7 +231,7 @@ export default function RegisterScreen() {
               )}
             </TouchableOpacity>
             {errors.confirmPassword && (
-              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+              <Text className="mt-1 text-sm text-red-600">{errors.confirmPassword}</Text>
             )}
           </View>
 
@@ -224,32 +240,40 @@ export default function RegisterScreen() {
             selectedAvatar={selectedAvatar?.id || null}
             onSelect={setSelectedAvatar}
           />
-          {errors.avatar && <Text style={styles.errorText}>{errors.avatar}</Text>}
+          {errors.avatar && (
+            <Text className="mt-1 text-center text-sm text-red-600">{errors.avatar}</Text>
+          )}
 
           <TouchableOpacity
-            style={styles.termsContainer}
+            className="mb-6 flex-row items-center"
             onPress={() => setAcceptedTerms(!acceptedTerms)}>
-            <View style={[styles.checkbox, acceptedTerms && styles.checkboxChecked]} />
-            <Text style={styles.termsText}>
-              Li e aceito os <Text style={styles.termsLink}>Termos de Uso</Text> e a{' '}
-              <Text style={styles.termsLink}>Política de Privacidade</Text>
+            <View
+              className={`mr-2 h-5 w-5 rounded border-2 ${
+                acceptedTerms ? 'border-[#2C3E85] bg-[#2C3E85]' : 'border-[#8B877D]'
+              }`}
+            />
+            <Text className="text-[#8B877D]">
+              Li e aceito os <Text className="font-semibold text-[#2C3E85]">Termos de Uso</Text> e a{' '}
+              <Text className="font-semibold text-[#2C3E85]">Política de Privacidade</Text>
             </Text>
           </TouchableOpacity>
-          {errors.terms && <Text style={styles.errorText}>{errors.terms}</Text>}
+          {errors.terms && (
+            <Text className="mt-1 text-center text-sm text-red-600">{errors.terms}</Text>
+          )}
 
           <Button
             title="Criar Conta"
             onPress={handleRegister}
             loading={loading}
-            style={styles.registerButton}
+            className="mb-6"
             fullWidth
           />
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Já tem uma conta? </Text>
+          <View className="flex-row justify-center">
+            <Text className="text-[#8B877D]">Já tem uma conta? </Text>
             <Link href="/login" asChild>
               <TouchableOpacity>
-                <Text style={styles.footerLink}>Entrar</Text>
+                <Text className="font-semibold text-[#2C3E85]">Entrar</Text>
               </TouchableOpacity>
             </Link>
           </View>
@@ -258,109 +282,3 @@ export default function RegisterScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F1EB',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 24,
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 24,
-  },
-  backButton: {
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#2C3E85',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#8F9779',
-  },
-  form: {
-    paddingHorizontal: 24,
-  },
-  inputContainer: {
-    marginBottom: 16,
-    position: 'relative',
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 44,
-    fontSize: 16,
-    color: '#1F2937',
-    borderWidth: 1,
-    borderColor: '#E0D7C2',
-  },
-  inputIcon: {
-    position: 'absolute',
-    left: 12,
-    top: 12,
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-  },
-  errorText: {
-    color: '#E11D48',
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
-  termsContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 24,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#2C3E85',
-    marginRight: 8,
-    marginTop: 2,
-  },
-  checkboxChecked: {
-    backgroundColor: '#2C3E85',
-  },
-  termsText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#565B49',
-    lineHeight: 20,
-  },
-  termsLink: {
-    color: '#2C3E85',
-    fontWeight: '500',
-  },
-  registerButton: {
-    marginBottom: 24,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#565B49',
-  },
-  footerLink: {
-    fontSize: 14,
-    color: '#2C3E85',
-    fontWeight: '600',
-  },
-});

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   Image,
@@ -77,46 +76,57 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-[#F5F1EB]"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
+      <ScrollView
+        className="flex-1 pb-6"
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}>
+        <View className="items-center pb-10 pt-[60px]">
           <Image
             source={{
               uri: 'https://images.pexels.com/photos/4240498/pexels-photo-4240498.jpeg?auto=compress&cs=tinysrgb&w=300',
             }}
-            style={styles.logo}
+            className="mb-4 h-[100px] w-[100px] rounded-full"
           />
-          <Text style={styles.title}>Guardiões da Verdade</Text>
-          <Text style={styles.subtitle}>Bem-vindo de volta!</Text>
+          <Text className="mb-2 text-2xl font-bold text-[#2C3E85]">Guardiões da Verdade</Text>
+          <Text className="text-lg text-[#8F9779]">Bem-vindo de volta!</Text>
         </View>
 
-        <View style={styles.form}>
-          {error && <Text style={styles.errorText}>{error}</Text>}
+        <View className="px-6">
+          {error && <Text className="mb-4 text-center text-sm text-red-600">{error}</Text>}
 
-          <View style={styles.inputContainer}>
-            <Mail size={20} color="#8B877D" style={styles.inputIcon} />
+          <View className="mb-4 flex-1 ">
             <TextInput
-              style={styles.input}
+              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 text-base text-gray-800"
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
             />
+
+            <View className="absolute left-3 top-3">
+              <Mail size={20} color="#8B877D" />
+            </View>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Lock size={20} color="#8B877D" style={styles.inputIcon} />
+          <View className="relative mb-4">
             <TextInput
-              style={[styles.input, { paddingRight: 50 }]}
+              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 pr-12 text-base text-gray-800"
               placeholder="Senha"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
+            <View className="absolute left-3 top-3">
+              <Lock size={20} color="#8B877D" className="absolute left-3 top-3" />
+            </View>
+
+            <TouchableOpacity
+              className="absolute right-3 top-3"
+              onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? (
                 <EyeOff size={20} color="#8B877D" />
               ) : (
@@ -125,16 +135,20 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.optionsRow}>
+          <View className="mb-6 flex-row items-center justify-between">
             <TouchableOpacity
-              style={styles.checkboxContainer}
+              className="flex-row items-center"
               onPress={() => setRememberMe(!rememberMe)}>
-              <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]} />
-              <Text style={styles.checkboxLabel}>Lembrar-me</Text>
+              <View
+                className={`mr-2 h-5 w-5 rounded border-2 ${
+                  rememberMe ? 'border-[#2C3E85] bg-[#2C3E85]' : 'border-[#8B877D]'
+                }`}
+              />
+              <Text className="text-[#8B877D]">Lembrar-me</Text>
             </TouchableOpacity>
 
             <TouchableOpacity>
-              <Text style={styles.forgotPassword}>Esqueceu a senha?</Text>
+              <Text className="text-[#2C3E85]">Esqueceu a senha?</Text>
             </TouchableOpacity>
           </View>
 
@@ -142,43 +156,43 @@ export default function LoginScreen() {
             title="Entrar"
             onPress={handleLogin}
             loading={loading}
-            style={styles.loginButton}
+            className="mb-6"
             fullWidth
           />
 
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>ou continue com</Text>
-            <View style={styles.dividerLine} />
+          <View className="mb-6 flex-row items-center">
+            <View className="h-px flex-1 bg-[#E0D7C2]" />
+            <Text className="mx-4 text-[#8B877D]">ou continue com</Text>
+            <View className="h-px flex-1 bg-[#E0D7C2]" />
           </View>
 
-          <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
+          <View className="mb-6 flex-row justify-center space-x-4">
+            <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-white">
               <Image
                 source={{
                   uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
                 }}
-                style={styles.socialIcon}
+                className="h-6 w-6"
                 resizeMode="contain"
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-white">
               <Image
                 source={{
                   uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png',
                 }}
-                style={styles.socialIcon}
+                className="h-6 w-6"
                 resizeMode="contain"
               />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Não tem uma conta? </Text>
+          <View className="flex-row justify-center">
+            <Text className="text-[#8B877D]">Não tem uma conta? </Text>
             <Link href="/register" asChild>
               <TouchableOpacity>
-                <Text style={styles.footerLink}>Registre-se</Text>
+                <Text className="font-semibold text-[#2C3E85]">Registre-se</Text>
               </TouchableOpacity>
             </Link>
           </View>
@@ -187,153 +201,3 @@ export default function LoginScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F1EB',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 24,
-  },
-  header: {
-    alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#2C3E85',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#8F9779',
-  },
-  form: {
-    paddingHorizontal: 24,
-  },
-  errorText: {
-    color: '#E11D48',
-    fontSize: 14,
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    marginBottom: 16,
-    position: 'relative',
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 44,
-    fontSize: 16,
-    color: '#1F2937',
-    borderWidth: 1,
-    borderColor: '#E0D7C2',
-  },
-  inputIcon: {
-    position: 'absolute',
-    left: 12,
-    top: 12,
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-  },
-  optionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#2C3E85',
-    marginRight: 8,
-  },
-  checkboxChecked: {
-    backgroundColor: '#2C3E85',
-  },
-  checkboxLabel: {
-    fontSize: 14,
-    color: '#565B49',
-  },
-  forgotPassword: {
-    fontSize: 14,
-    color: '#2C3E85',
-    fontWeight: '500',
-  },
-  loginButton: {
-    marginBottom: 24,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#E0D7C2',
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    color: '#8B877D',
-    fontSize: 14,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  socialButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  socialIcon: {
-    width: 24,
-    height: 24,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#565B49',
-  },
-  footerLink: {
-    fontSize: 14,
-    color: '#2C3E85',
-    fontWeight: '600',
-  },
-});

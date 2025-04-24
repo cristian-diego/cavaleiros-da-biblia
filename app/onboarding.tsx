@@ -88,8 +88,8 @@ export default function OnboardingScreen() {
         <Button
           title={currentSlide === slides.length - 1 ? 'Criar Guardião' : 'Próximo'}
           onPress={handleNext}
-          className="w-full"
-          variant="primary"
+          className="mb-6 h-14"
+          size="lg"
         />
       </View>
     </View>
