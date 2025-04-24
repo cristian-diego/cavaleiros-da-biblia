@@ -1,24 +1,16 @@
 import React, { useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ScrollView, Image, Dimensions } from 'react-native';
 import { router } from 'expo-router';
-import { avatars } from '@/data/avatars';
-import { Avatar } from '@/types';
-import useUserStore from '@/store/userStore';
 import useOnboardingStore from '@/store/onboardingStore';
-import AvatarSelect from '@/components/ui/AvatarSelect';
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutLeft } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInRight,
+  SlideOutLeft,
+  BounceIn,
+  withSpring,
+} from 'react-native-reanimated';
 import { slides } from '@/data/onboardingSlides';
 
 const { width } = Dimensions.get('window');
@@ -26,7 +18,6 @@ const { width } = Dimensions.get('window');
 export default function OnboardingScreen() {
   const { setHasSeenOnboarding } = useOnboardingStore();
   const [currentSlide, setCurrentSlide] = useState(0);
-
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleNext = () => {
@@ -40,7 +31,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <View className="flex-1 bg-[#F5F1EB]">
+    <View className="flex-1 bg-background">
       <ScrollView
         ref={scrollViewRef}
         horizontal
@@ -53,45 +44,53 @@ export default function OnboardingScreen() {
             key={slide.id}
             className="flex-1 items-center justify-center px-8"
             style={{ width }}
-            entering={SlideInRight}
+            entering={SlideInRight.springify().damping(15)}
             exiting={SlideOutLeft}>
-            <Image
-              source={{ uri: slide.image }}
-              className="mb-8 h-[80%] w-[80%] rounded-3xl"
-              style={{ width: width * 0.8, height: width * 0.8 }}
-            />
-            <View className="items-center">
-              <slide.icon size={48} color={slide.color} />
-              <Text className="mb-3 mt-4 text-center text-2xl font-bold text-[#2C3E85]">
-                {slide.title}
-              </Text>
-              <Text className="text-center text-base leading-6 text-[#565B49]">
-                {slide.description}
-              </Text>
-            </View>
+            {/* <Animated.View
+              className="animate-float w-[85%] items-center justify-center overflow-hidden"
+              entering={BounceIn.delay(300)}>
+              <Image
+                source={{ uri: slide.image }}
+                className="h-[250] w-full rounded-kid-lg"
+                style={{ width: width * 0.75, height: width * 0.75 }}
+                resizeMode="cover"
+              />
+            </Animated.View> */}
+
+            <Animated.View
+              className="kid-card animate-float mt-8 items-center"
+              entering={BounceIn.delay(300)}>
+              <View className="mb-4 rounded-full bg-kid-blue/10 p-4">
+                <slide.icon size={48} color={slide.color} />
+              </View>
+              <Text className="kid-title text-center">{slide.title}</Text>
+              <Text className="kid-text px-4 text-center">{slide.description}</Text>
+            </Animated.View>
           </Animated.View>
         ))}
       </ScrollView>
 
-      <View className="p-6">
-        <View className="mb-6 flex-row justify-center">
+      <Animated.View className="bg-white/80 p-6 backdrop-blur-sm" entering={FadeIn}>
+        <View className="mb-6 flex-row justify-center space-x-2">
           {slides.map((_, index) => (
-            <View
+            <Animated.View
               key={index}
-              className={`mx-1 h-2 w-2 rounded-full ${
-                currentSlide === index ? 'w-6 bg-[#2C3E85]' : 'bg-[#E0D7C2]'
+              className={`h-2 rounded-full ${
+                currentSlide === index
+                  ? 'w-8 animate-bounce-soft bg-kid-blue'
+                  : 'w-2 bg-kid-blue/20'
               }`}
+              entering={BounceIn.delay(index * 100)}
             />
           ))}
         </View>
 
         <Button
-          title={currentSlide === slides.length - 1 ? 'Criar Guardião' : 'Próximo'}
+          title={currentSlide === slides.length - 1 ? 'Começar Aventura!' : 'Próximo'}
           onPress={handleNext}
-          className="mb-6 h-14"
-          size="lg"
+          className="kid-button h-14"
         />
-      </View>
+      </Animated.View>
     </View>
   );
 }

@@ -10,6 +10,8 @@ export default function Index() {
     return null;
   }
 
+  return <Redirect href="/onboarding" />;
+
   if (!session || !user) {
     return <Redirect href="/login" />;
   }

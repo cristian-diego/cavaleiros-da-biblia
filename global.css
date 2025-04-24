@@ -13,13 +13,13 @@
   .kid-button {
     @apply flex items-center justify-center space-x-2 rounded-kid
            bg-kid-blue px-kid-lg py-kid text-white
-           shadow-lg transition-all duration-200 active:scale-95;
+           transition-all duration-200 active:scale-95;
     font-family: 'Nunito-Bold';
   }
 
   .kid-card {
     @apply rounded-kid-lg border-2 border-gray-200 bg-white
-           p-kid-lg shadow-lg;
+           p-kid-lg;
   }
 
   .kid-input {
