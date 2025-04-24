@@ -32,10 +32,6 @@ export default function MissionsScreen() {
   };
 
   const handleResetMissions = () => {
-    reset();
-    router.replace('/onboarding');
-    return;
-
     Alert.alert(
       'Reiniciar Missões',
       'Tem certeza que deseja reiniciar todas as missões? Isso vai apagar seu progresso de hoje.',

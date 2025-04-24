@@ -14,16 +14,12 @@ import { supabase } from '@/lib/supabase';
 import useUserStore from '@/store/userStore';
 import Button from '@/components/ui/Button';
 import { Eye, EyeOff, Mail, Lock, User, ChevronLeft } from 'lucide-react-native';
-import AvatarSelect from '@/components/ui/AvatarSelect';
-import { avatars } from '@/data/avatars';
-import { Avatar } from '@/types';
 
 interface ValidationErrors {
   name?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
-  avatar?: string;
   terms?: string;
 }
 
@@ -35,7 +31,6 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -63,10 +58,6 @@ export default function RegisterScreen() {
       newErrors.confirmPassword = 'As senhas não coincidem';
     }
 
-    if (!selectedAvatar) {
-      newErrors.avatar = 'Selecione um avatar';
-    }
-
     if (!acceptedTerms) {
       newErrors.terms = 'Você precisa aceitar os termos de uso';
     }
@@ -87,7 +78,6 @@ export default function RegisterScreen() {
         options: {
           data: {
             name,
-            avatar_url: selectedAvatar?.image,
           },
         },
       });
@@ -95,23 +85,11 @@ export default function RegisterScreen() {
       if (error) throw error;
 
       if (data.user) {
-        // Create profile in profiles table
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update([
-            {
-              avatar_url: selectedAvatar?.image,
-            },
-          ])
-          .eq('id', data.user.id);
-
-        if (profileError) throw profileError;
-
         // Set user in store
         setUser({
           id: data.user.id,
           name,
-          avatar: selectedAvatar?.image || '',
+          avatar: '',
           xp: 0,
           level: 1,
           attributes: {
@@ -119,12 +97,12 @@ export default function RegisterScreen() {
             boldness: 1,
             wisdom: 1,
           },
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: data.user.created_at,
+          updatedAt: data.user.updated_at ?? '',
         });
       }
 
-      router.replace('/(tabs)');
+      router.replace('register/step2');
     } catch (err: any) {
       setErrors({
         ...errors,
@@ -234,15 +212,6 @@ export default function RegisterScreen() {
               <Text className="mt-1 text-sm text-red-600">{errors.confirmPassword}</Text>
             )}
           </View>
-
-          <AvatarSelect
-            avatars={avatars}
-            selectedAvatar={selectedAvatar?.id || null}
-            onSelect={setSelectedAvatar}
-          />
-          {errors.avatar && (
-            <Text className="mt-1 text-center text-sm text-red-600">{errors.avatar}</Text>
-          )}
 
           <TouchableOpacity
             className="mb-6 flex-row items-center"
