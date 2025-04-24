@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Text,
   TouchableOpacity,
-  StyleSheet,
   ActivityIndicator,
   TouchableOpacityProps,
   ViewStyle,
@@ -36,103 +35,99 @@ const Button: React.FC<ButtonProps> = ({
   const getGradientColors = () => {
     switch (variant) {
       case 'primary':
-        return ['#3747A0', '#2C3E85', '#19254E'];
+        return ['#3747A0', '#2C3E85', '#19254E'] as const;
       case 'secondary':
-        return ['#D6AD14', '#CFB53B', '#A6912F'];
+        return ['#D6AD14', '#CFB53B', '#A6912F'] as const;
       case 'outline':
-        return ['transparent', 'transparent'];
+        return ['transparent', 'transparent'] as const;
       default:
-        return ['#3747A0', '#2C3E85', '#19254E'];
+        return ['#3747A0', '#2C3E85', '#19254E'] as const;
     }
   };
 
-  const getButtonStyles = () => {
-    const baseStyles = [styles.button];
+  const getButtonClasses = () => {
+    const baseClasses = [
+      'rounded-2xl overflow-hidden ',
+      'shadow-black shadow-offset-[0px/2px] shadow-opacity-10 shadow-radius-4',
+    ];
 
-    // Add size styles
+    // Add size classes
     switch (size) {
       case 'sm':
-        baseStyles.push(styles.buttonSm);
+        baseClasses.push('h-9 px-4');
         break;
       case 'lg':
-        baseStyles.push(styles.buttonLg);
+        baseClasses.push('h-14 px-8');
         break;
       default:
-        baseStyles.push(styles.buttonMd);
+        baseClasses.push('h-12 px-6');
     }
 
-    // Add full width style if needed
+    // Add full width class if needed
     if (fullWidth) {
-      baseStyles.push(styles.fullWidth);
+      baseClasses.push('w-full');
     }
 
-    // Add variant-specific styles
+    // Add variant-specific classes
     if (variant === 'outline') {
-      baseStyles.push(styles.buttonOutline);
+      baseClasses.push('bg-transparent border-2 border-[#2C3E85] elevation-2');
     }
 
-    // Add disabled style
+    // Add disabled class
     if (disabled) {
-      baseStyles.push(styles.buttonDisabled);
+      baseClasses.push('opacity-50');
     }
 
-    // Add custom styles
-    if (style) {
-      baseStyles.push(style);
-    }
-
-    return baseStyles;
+    return baseClasses.join(' ');
   };
 
-  const getTextStyles = () => {
-    const baseTextStyles = [styles.text];
+  const getTextClasses = () => {
+    const baseTextClasses = ['text-white font-semibold text-center'];
 
-    // Add size-specific text styles
+    // Add size-specific text classes
     switch (size) {
       case 'sm':
-        baseTextStyles.push(styles.textSm);
+        baseTextClasses.push('text-sm');
         break;
       case 'lg':
-        baseTextStyles.push(styles.textLg);
+        baseTextClasses.push('text-lg');
         break;
       default:
-        baseTextStyles.push(styles.textMd);
+        baseTextClasses.push('text-base');
     }
 
-    // Add variant-specific text styles
+    // Add variant-specific text classes
     if (variant === 'outline') {
-      baseTextStyles.push(styles.textOutline);
+      baseTextClasses.push('text-[#2C3E85]');
     }
 
-    // Add disabled text style
+    // Add disabled text class
     if (disabled) {
-      baseTextStyles.push(styles.textDisabled);
+      baseTextClasses.push('text-gray-400');
     }
 
-    // Add custom text styles
-    if (textStyle) {
-      baseTextStyles.push(textStyle);
-    }
-
-    return baseTextStyles;
+    return baseTextClasses.join(' ');
   };
 
   return (
     <TouchableOpacity
-      style={getButtonStyles()}
+      className={getButtonClasses()}
+      style={style}
       disabled={disabled || loading}
       activeOpacity={0.7}
       {...props}>
       {variant !== 'outline' ? (
         <LinearGradient
           colors={getGradientColors()}
-          style={styles.gradient}
+          className="flex-1 items-center justify-center p-2"
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}>
           {loading ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text style={getTextStyles()}>{title}</Text>
+            <Text className={getTextClasses()} style={textStyle}>
+              {title}
+            </Text>
           )}
         </LinearGradient>
       ) : (
@@ -140,73 +135,14 @@ const Button: React.FC<ButtonProps> = ({
           {loading ? (
             <ActivityIndicator color="#2C3E85" size="small" />
           ) : (
-            <Text style={getTextStyles()}>{title}</Text>
+            <Text className={getTextClasses()} style={textStyle}>
+              {title}
+            </Text>
           )}
         </>
       )}
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  buttonSm: {
-    height: 36,
-    paddingHorizontal: 16,
-  },
-  buttonMd: {
-    height: 48,
-    paddingHorizontal: 24,
-  },
-  buttonLg: {
-    height: 56,
-    paddingHorizontal: 32,
-  },
-  buttonOutline: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#2C3E85',
-    elevation: 2,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  gradient: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 8,
-  },
-  text: {
-    color: '#fff',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  textSm: {
-    fontSize: 14,
-  },
-  textMd: {
-    fontSize: 16,
-  },
-  textLg: {
-    fontSize: 18,
-  },
-  textOutline: {
-    color: '#2C3E85',
-  },
-  textDisabled: {
-    color: '#999',
-  },
-});
 
 export default Button;

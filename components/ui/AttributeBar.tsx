@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import ProgressBar from './ProgressBar';
 
 interface AttributeBarProps {
@@ -16,45 +16,18 @@ const AttributeBar: React.FC<AttributeBarProps> = ({
   color = '#CFB53B',
 }) => {
   const percentage = (value / maxValue) * 100;
-  
+
   return (
-    <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{name}</Text>
-        <Text style={styles.value}>
+    <View className="my-1.5 w-full">
+      <View className="mb-1 flex-row items-center justify-between">
+        <Text className="text-sm font-medium text-[#565B49]">{name}</Text>
+        <Text className="text-xs font-semibold text-[#8B877D]">
           {value}/{maxValue}
         </Text>
       </View>
-      <ProgressBar
-        progress={percentage}
-        height={8}
-        color={color}
-      />
+      <ProgressBar progress={percentage} height={8} color={color} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginVertical: 6,
-  },
-  labelContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#565B49',
-  },
-  value: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#8B877D',
-  },
-});
 
 export default AttributeBar;

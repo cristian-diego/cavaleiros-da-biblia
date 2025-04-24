@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -23,7 +23,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   style,
 }) => {
   const animatedWidth = useSharedValue(0);
-  
+
   useEffect(() => {
     // Ensure progress is between 0 and 100
     const clampedProgress = Math.min(Math.max(progress, 0), 100);
@@ -32,42 +32,18 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
   }, [progress, animatedWidth]);
-  
+
   const widthStyle = useAnimatedStyle(() => {
     return {
       width: `${animatedWidth.value}%`,
     };
   });
-  
+
   return (
-    <View
-      style={[
-        styles.container,
-        { height, backgroundColor },
-        style,
-      ]}
-    >
-      <Animated.View
-        style={[
-          styles.progressFill,
-          { backgroundColor: color },
-          widthStyle,
-        ]}
-      />
+    <View className="w-full overflow-hidden rounded" style={[{ height, backgroundColor }, style]}>
+      <Animated.View className="h-full rounded" style={[{ backgroundColor: color }, widthStyle]} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    borderRadius: 6,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 6,
-  },
-});
 
 export default ProgressBar;

@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 
 interface CardProps {
   children: ReactNode;
@@ -7,65 +7,33 @@ interface CardProps {
   variant?: 'default' | 'elevated' | 'outline';
 }
 
-const Card: React.FC<CardProps> = ({ 
-  children, 
-  style, 
-  variant = 'default' 
-}) => {
-  const getCardStyle = () => {
-    const baseStyle = [styles.card];
-    
+const Card: React.FC<CardProps> = ({ children, style, variant = 'default' }) => {
+  const getCardClasses = () => {
+    const baseClasses = ['rounded-2xl p-4 bg-white m-2'];
+
     switch (variant) {
       case 'elevated':
-        baseStyle.push(styles.elevated);
+        baseClasses.push(
+          'shadow-black shadow-offset-[0px/4px] shadow-opacity-15 shadow-radius-8 elevation-4'
+        );
         break;
       case 'outline':
-        baseStyle.push(styles.outline);
+        baseClasses.push('border border-[#E0D7C2] bg-transparent');
         break;
       default:
-        baseStyle.push(styles.default);
+        baseClasses.push(
+          'shadow-black shadow-offset-[0px/2px] shadow-opacity-10 shadow-radius-4 elevation-2'
+        );
     }
-    
-    if (style) {
-      baseStyle.push(style);
-    }
-    
-    return baseStyle;
+
+    return baseClasses.join(' ');
   };
 
   return (
-    <View style={getCardStyle()}>
+    <View className={getCardClasses()} style={style}>
       {children}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: 16,
-    backgroundColor: '#fff',
-    margin: 8,
-  },
-  default: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  elevated: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  outline: {
-    borderWidth: 1,
-    borderColor: '#E0D7C2',
-    backgroundColor: 'transparent',
-  },
-});
 
 export default Card;

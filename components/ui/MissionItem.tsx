@@ -1,17 +1,12 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity 
-} from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Check, CheckCircle } from 'lucide-react-native';
 import { Mission } from '@/types';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
-  interpolateColor 
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolateColor,
 } from 'react-native-reanimated';
 
 interface MissionItemProps {
@@ -20,72 +15,71 @@ interface MissionItemProps {
   disabled?: boolean;
 }
 
-const MissionItem: React.FC<MissionItemProps> = ({
-  mission,
-  onComplete,
-  disabled = false,
-}) => {
+const MissionItem: React.FC<MissionItemProps> = ({ mission, onComplete, disabled = false }) => {
   const animatedValue = useSharedValue(mission.completed ? 1 : 0);
-  
+
   const handleComplete = () => {
     if (disabled || mission.completed) return;
-    
+
     onComplete(mission.id);
     animatedValue.value = withSpring(1, { damping: 15 });
   };
-  
+
   const animatedContainerStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: interpolateColor(
-        animatedValue.value,
-        [0, 1],
-        ['#FFFFFF', '#F5F1EB']
-      ),
+      backgroundColor: interpolateColor(animatedValue.value, [0, 1], ['#FFFFFF', '#F5F1EB']),
     };
   });
-  
+
   const animatedCheckStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: withSpring(animatedValue.value * 1 + 1) }],
       opacity: withSpring(animatedValue.value),
     };
   });
-  
+
+  const getAttributeClasses = () => {
+    switch (mission.attribute) {
+      case 'faith':
+        return 'bg-[#E6E8F3] text-[#2C3E85]';
+      case 'boldness':
+        return 'bg-[#ECEEE9] text-[#6B784D]';
+      case 'wisdom':
+        return 'bg-[#F5EBBC] text-[#A6912F]';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <Animated.View style={[styles.container, animatedContainerStyle]}>
-      <View style={styles.content}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{mission.title}</Text>
-          <Text style={styles.xp}>+{mission.xpReward} XP</Text>
+    <Animated.View
+      className="shadow-offset-[0px/2px] shadow-opacity-10 shadow-radius-3 elevation-2 mb-3 flex-row rounded-xl bg-white p-4 shadow-sm shadow-black"
+      style={animatedContainerStyle}>
+      <View className="mr-3 flex-1">
+        <View className="mb-1.5 flex-row items-center justify-between">
+          <Text className="text-lg font-semibold text-[#2C3E85]">{mission.title}</Text>
+          <Text className="text-sm font-semibold text-[#CFB53B]">+{mission.xpReward} XP</Text>
         </View>
-        
-        <Text style={styles.description}>{mission.description}</Text>
-        
-        <View style={styles.attributeContainer}>
-          <Text style={styles.attributeLabel}>Atributo:</Text>
-          <Text style={[
-            styles.attributeValue,
-            mission.attribute === 'faith' && styles.faithAttribute,
-            mission.attribute === 'boldness' && styles.boldnessAttribute,
-            mission.attribute === 'wisdom' && styles.wisdomAttribute,
-          ]}>
+
+        <Text className="mb-2 text-sm text-[#565B49]">{mission.description}</Text>
+
+        <View className="flex-row items-center">
+          <Text className="mr-1 text-xs text-[#8B877D]">Atributo:</Text>
+          <Text className={`rounded-lg px-2 py-0.5 text-xs font-semibold ${getAttributeClasses()}`}>
             {mission.attribute === 'faith' && 'Fé'}
             {mission.attribute === 'boldness' && 'Coragem'}
             {mission.attribute === 'wisdom' && 'Sabedoria'}
           </Text>
         </View>
       </View>
-      
+
       <TouchableOpacity
-        style={[
-          styles.checkboxContainer,
-          mission.completed && styles.completedCheckbox,
-          disabled && styles.disabledCheckbox,
-        ]}
+        className={`h-10 w-10 items-center justify-center rounded-xl border-2 border-[#8F9779] ${
+          mission.completed ? 'border-[#8F9779] bg-[#ECEEE9]' : ''
+        } ${disabled ? 'opacity-50' : ''}`}
         onPress={handleComplete}
         disabled={disabled || mission.completed}
-        activeOpacity={0.7}
-      >
+        activeOpacity={0.7}>
         {mission.completed ? (
           <Animated.View style={animatedCheckStyle}>
             <CheckCircle color="#8F9779" size={28} />
@@ -97,89 +91,5 @@ const MissionItem: React.FC<MissionItemProps> = ({
     </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  content: {
-    flex: 1,
-    marginRight: 12,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#2C3E85',
-  },
-  xp: {
-    fontSize: 14,
-    color: '#CFB53B',
-    fontWeight: '600',
-  },
-  description: {
-    fontSize: 14,
-    color: '#565B49',
-    marginBottom: 8,
-  },
-  attributeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  attributeLabel: {
-    fontSize: 12,
-    color: '#8B877D',
-    marginRight: 4,
-  },
-  attributeValue: {
-    fontSize: 12,
-    fontWeight: '600',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  faithAttribute: {
-    backgroundColor: '#E6E8F3',
-    color: '#2C3E85',
-  },
-  boldnessAttribute: {
-    backgroundColor: '#ECEEE9',
-    color: '#6B784D',
-  },
-  wisdomAttribute: {
-    backgroundColor: '#F5EBBC',
-    color: '#A6912F',
-  },
-  checkboxContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#8F9779',
-    borderRadius: 12,
-    width: 40,
-    height: 40,
-  },
-  completedCheckbox: {
-    borderColor: '#8F9779',
-    backgroundColor: '#ECEEE9',
-  },
-  disabledCheckbox: {
-    opacity: 0.5,
-  },
-});
 
 export default MissionItem;
