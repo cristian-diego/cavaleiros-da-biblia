@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import { initializeAuth, useAuthStore } from '@/store/authStore';
+import '../global.css';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
