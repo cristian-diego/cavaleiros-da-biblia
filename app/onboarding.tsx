@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import useOnboardingStore from '@/store/onboardingStore';
 import Button from '@/components/ui/Button';
@@ -12,6 +12,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { slides } from '@/data/onboardingSlides';
+import KidButton from '@/components/ui/KidButton';
 
 const { width } = Dimensions.get('window');
 
@@ -85,10 +86,12 @@ export default function OnboardingScreen() {
           ))}
         </View>
 
-        <Button
+        <KidButton
           title={currentSlide === slides.length - 1 ? 'Começar Aventura!' : 'Próximo'}
           onPress={handleNext}
-          className="kid-button h-14"
+          fullWidth
+          style={{ marginVertical: 10 }}
+          textStyle={{ textTransform: 'uppercase' }}
         />
       </Animated.View>
     </View>
