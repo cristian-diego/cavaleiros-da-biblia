@@ -97,18 +97,14 @@ export default function RegisterScreen() {
 
       if (data.user) {
         // Create profile in profiles table
-        const { error: profileError } = await supabase.from('profiles').insert([
-          {
-            id: data.user.id,
-            name,
-            avatar_url: selectedAvatar?.image,
-            xp: 0,
-            level: 1,
-            faith: 1,
-            boldness: 1,
-            wisdom: 1,
-          },
-        ]);
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update([
+            {
+              avatar_url: selectedAvatar?.image,
+            },
+          ])
+          .eq('id', data.user.id);
 
         if (profileError) throw profileError;
 

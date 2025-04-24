@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
+import {
+  Text,
+  TouchableOpacity,
+  StyleSheet,
   ActivityIndicator,
   TouchableOpacityProps,
   ViewStyle,
-  TextStyle
+  TextStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -48,7 +48,7 @@ const Button: React.FC<ButtonProps> = ({
 
   const getButtonStyles = () => {
     const baseStyles = [styles.button];
-    
+
     // Add size styles
     switch (size) {
       case 'sm':
@@ -60,33 +60,33 @@ const Button: React.FC<ButtonProps> = ({
       default:
         baseStyles.push(styles.buttonMd);
     }
-    
+
     // Add full width style if needed
     if (fullWidth) {
       baseStyles.push(styles.fullWidth);
     }
-    
+
     // Add variant-specific styles
     if (variant === 'outline') {
       baseStyles.push(styles.buttonOutline);
     }
-    
+
     // Add disabled style
     if (disabled) {
       baseStyles.push(styles.buttonDisabled);
     }
-    
+
     // Add custom styles
     if (style) {
       baseStyles.push(style);
     }
-    
+
     return baseStyles;
   };
 
   const getTextStyles = () => {
     const baseTextStyles = [styles.text];
-    
+
     // Add size-specific text styles
     switch (size) {
       case 'sm':
@@ -98,22 +98,22 @@ const Button: React.FC<ButtonProps> = ({
       default:
         baseTextStyles.push(styles.textMd);
     }
-    
+
     // Add variant-specific text styles
     if (variant === 'outline') {
       baseTextStyles.push(styles.textOutline);
     }
-    
+
     // Add disabled text style
     if (disabled) {
       baseTextStyles.push(styles.textDisabled);
     }
-    
+
     // Add custom text styles
     if (textStyle) {
       baseTextStyles.push(textStyle);
     }
-    
+
     return baseTextStyles;
   };
 
@@ -122,15 +122,13 @@ const Button: React.FC<ButtonProps> = ({
       style={getButtonStyles()}
       disabled={disabled || loading}
       activeOpacity={0.7}
-      {...props}
-    >
+      {...props}>
       {variant !== 'outline' ? (
         <LinearGradient
           colors={getGradientColors()}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
+          end={{ x: 1, y: 1 }}>
           {loading ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
@@ -154,7 +152,6 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 16,
     overflow: 'hidden',
-    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -176,6 +173,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 2,
     borderColor: '#2C3E85',
+    elevation: 2,
   },
   buttonDisabled: {
     opacity: 0.5,

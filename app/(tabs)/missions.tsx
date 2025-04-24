@@ -6,7 +6,7 @@ import MissionItem from '@/components/ui/MissionItem';
 import Button from '@/components/ui/Button';
 import { Mission } from '@/types';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
-
+import { router } from 'expo-router';
 export default function MissionsScreen() {
   const { missions, completeMission, resetMissions } = useMissionStore();
   const { user, addXp, reset } = useUserStore();
@@ -32,6 +32,10 @@ export default function MissionsScreen() {
   };
 
   const handleResetMissions = () => {
+    reset();
+    router.replace('/onboarding');
+    return;
+
     Alert.alert(
       'Reiniciar Missões',
       'Tem certeza que deseja reiniciar todas as missões? Isso vai apagar seu progresso de hoje.',
