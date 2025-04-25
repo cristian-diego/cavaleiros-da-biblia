@@ -12,6 +12,7 @@ import {
 } from '@expo-google-fonts/nunito';
 import { initializeAuth, useAuthStore } from '@/store/authStore';
 import '../global.css';
+import { ThemeProvider } from '@/lib/theme/ThemeProvider';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -45,7 +46,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <ThemeProvider>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -70,6 +71,6 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="dark" />
-    </>
+    </ThemeProvider>
   );
 }

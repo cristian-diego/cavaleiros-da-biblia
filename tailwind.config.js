@@ -1,17 +1,22 @@
 /** @type {import('tailwindcss').Config} */
+const { vars } = require('nativewind/theme');
+
 module.exports = {
-  content: ['./app/**/*.{js,ts,tsx}', './components/**/*.{js,ts,tsx}'],
+  content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
 
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {
-        primary: '#4A90E2', // Friendly blue
-        secondary: '#FFD700', // Cheerful yellow
+        // Theme colors using CSS variables
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        background: 'rgb(var(--color-background) / <alpha-value>)',
+        text: 'rgb(var(--color-text) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
         success: '#2ECC71', // Bright green
         warning: '#F1C40F', // Warm yellow
         danger: '#E74C3C', // Soft red
-        background: '#F8F9FA', // Light background
         'kid-blue': '#4A90E2',
         'kid-yellow': '#FFD700',
         'kid-green': '#2ECC71',
@@ -48,5 +53,17 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Set default theme values
+    ({ addBase }) =>
+      addBase({
+        ':root': {
+          '--color-primary': '74 144 226', // kid-bible blue
+          '--color-secondary': '107 70 193', // kid-adventurers purple
+          '--color-background': '245 245 245',
+          '--color-text': '45 55 72',
+          '--color-accent': '255 255 255',
+        },
+      }),
+  ],
 };

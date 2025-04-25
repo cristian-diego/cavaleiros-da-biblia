@@ -1,5 +1,13 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, ScrollView, Image, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import { router } from 'expo-router';
 import useOnboardingStore from '@/store/onboardingStore';
 import Button from '@/components/ui/Button';
@@ -13,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { slides } from '@/data/onboardingSlides';
 import KidButton from '@/components/ui/KidButton';
+import ThemePreview from '@/components/ui/ThemePreview';
 
 const { width } = Dimensions.get('window');
 
@@ -30,6 +39,10 @@ export default function OnboardingScreen() {
       router.replace('/login');
     }
   };
+
+  useEffect(() => {
+    router.replace('/theme-showcase');
+  }, []);
 
   return (
     <View className="flex-1 bg-background">
