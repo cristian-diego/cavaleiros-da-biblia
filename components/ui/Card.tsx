@@ -4,10 +4,11 @@ import { View, ViewStyle } from 'react-native';
 interface CardProps {
   children: ReactNode;
   style?: ViewStyle;
+  className?: string;
   variant?: 'default' | 'elevated' | 'outline';
 }
 
-const Card: React.FC<CardProps> = ({ children, style, variant = 'default' }) => {
+const Card: React.FC<CardProps> = ({ children, style, className = '', variant = 'default' }) => {
   const getCardClasses = () => {
     const baseClasses = ['rounded-2xl p-4 bg-white m-2'];
 
@@ -26,7 +27,7 @@ const Card: React.FC<CardProps> = ({ children, style, variant = 'default' }) => 
         );
     }
 
-    return baseClasses.join(' ');
+    return [...baseClasses, className].join(' ');
   };
 
   return (

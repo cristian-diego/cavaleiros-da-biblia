@@ -1,13 +1,6 @@
 import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, ScrollView, Image, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useUserStore from '@/store/userStore';
 import useMissionStore from '@/store/missionStore';
 import ProgressBar from '@/components/ui/ProgressBar';
@@ -16,10 +9,13 @@ import { getDailyVerse } from '@/data/bibleVerses';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { router } from 'expo-router';
+import { Star, Trophy, Gift } from 'lucide-react-native';
+import KidButton from '@/components/ui/KidButton';
 
 export default function DashboardScreen() {
   const { user } = useUserStore();
   const { missions, resetDailyMissions } = useMissionStore();
+  const insets = useSafeAreaInsets();
 
   // Get daily verse
   const dailyVerse = getDailyVerse();
@@ -46,178 +42,109 @@ export default function DashboardScreen() {
 
   if (!user) {
     return (
-      <View style={styles.container}>
-        <Text>Carregando...</Text>
+      <View className="flex-1 items-center justify-center bg-background">
+        <Text className="kid-text">Carregando...</Text>
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <View style={styles.header}>
-          <View style={styles.userInfo}>
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
-            <View>
-              <Text style={styles.greeting}>Olá, {user.name}!</Text>
-              <Text style={styles.level}>Nível {user.level}</Text>
+    <SafeAreaView className="flex-1 bg-background">
+      <ScrollView className="flex-1" contentContainerClassName="pb-6">
+        {/* Header Section */}
+        <View
+          className="rounded-b-kid-xl bg-kid-blue px-4 pb-6"
+          style={{ paddingTop: insets.top + 16 }} // Add extra padding to account for status bar
+        >
+          <View className="mb-4 flex-row items-center">
+            <View className="relative">
+              <View className="animate-bounce-soft">
+                <Image
+                  source={{ uri: user.avatar }}
+                  className="border-3 h-16 w-16 rounded-full border-kid-yellow"
+                />
+              </View>
+              <View className="absolute -bottom-1 -right-1 rounded-full bg-kid-yellow p-1.5">
+                <Star size={14} color="#FFF" />
+              </View>
+            </View>
+            <View className="ml-3">
+              <Text className="text-kid-lg font-bold text-white">Olá, {user.name}!</Text>
+              <Text className="text-kid-base text-kid-yellow">Nível {user.level}</Text>
             </View>
           </View>
 
-          <View style={styles.xpContainer}>
-            <View style={styles.xpLabelContainer}>
-              <Text style={styles.xpLabel}>XP</Text>
-              <Text style={styles.xpValue}>{user.xp}</Text>
+          {/* XP Progress */}
+          <View className="mt-2 rounded-kid bg-white/20 p-3">
+            <View className="mb-2 flex-row justify-between">
+              <Text className="font-semibold text-white">XP</Text>
+              <Text className="animate-pulse font-bold text-kid-yellow">{user.xp}</Text>
             </View>
             <ProgressBar progress={calculateLevelProgress()} />
           </View>
         </View>
 
-        <VerseCard verse={dailyVerse} />
+        {/* Daily Verse Card */}
+        <View className="mt-6 px-4">
+          <VerseCard verse={dailyVerse} />
+        </View>
 
-        <View style={styles.statsContainer}>
-          <Text style={styles.sectionTitle}>Suas Missões de Hoje</Text>
+        {/* Stats Section */}
+        <View className="mt-6 px-4">
+          <Text className="kid-subtitle mb-3 flex-row items-center">
+            <Trophy size={24} color="#FFD700" className="mr-2" />
+            Suas Missões de Hoje
+          </Text>
 
-          <Card style={styles.statsCard}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{completedMissions}</Text>
-              <Text style={styles.statLabel}>Missões Completas</Text>
+          <Card className="kid-card animate-float flex-row justify-between py-4">
+            <View className="flex-1 items-center">
+              <Text className="mb-1 animate-pulse text-kid-xl font-bold text-kid-yellow">
+                {completedMissions}
+              </Text>
+              <Text className="text-center text-kid-sm text-gray-600">Missões{'\n'}Completas</Text>
             </View>
 
-            <View style={styles.divider} />
+            <View className="mx-2 w-[1px] bg-gray-200" />
 
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{missions.length - completedMissions}</Text>
-              <Text style={styles.statLabel}>Restantes</Text>
+            <View className="flex-1 items-center">
+              <Text className="mb-1 text-kid-xl font-bold text-kid-orange">
+                {missions.length - completedMissions}
+              </Text>
+              <Text className="text-center text-kid-sm text-gray-600">Missões{'\n'}Restantes</Text>
             </View>
 
-            <View style={styles.divider} />
+            <View className="mx-2 w-[1px] bg-gray-200" />
 
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+            <View className="flex-1 items-center">
+              <Text className="mb-1 text-kid-xl font-bold text-kid-green">
                 {missions.reduce((acc, mission) => {
                   return mission.completed ? acc + mission.xpReward : acc;
                 }, 0)}
               </Text>
-              <Text style={styles.statLabel}>XP Ganho</Text>
+              <Text className="text-center text-kid-sm text-gray-600">XP{'\n'}Ganho</Text>
             </View>
           </Card>
 
-          <Button
+          <KidButton
             title="Ver Missões"
             variant="secondary"
-            style={styles.missionsButton}
             onPress={() => router.push('/(tabs)/missions')}
           />
+        </View>
+
+        {/* Rewards Preview */}
+        <View className="mt-8 px-4">
+          <Card className="kid-card bg-white p-4">
+            <View className="flex-row items-center">
+              <Gift size={24} color="#FFD700" />
+              <Text className="ml-2 text-kid-lg text-gray-700">Próxima Recompensa</Text>
+            </View>
+            <Text className="mt-2 text-gray-600">
+              Complete mais {3 - completedMissions} missões para desbloquear uma surpresa especial!
+            </Text>
+          </Card>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F5F1EB',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F1EB',
-  },
-  contentContainer: {
-    paddingBottom: 24,
-  },
-  header: {
-    backgroundColor: '#2C3E85',
-    paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 3,
-    borderColor: '#CFB53B',
-    marginRight: 12,
-  },
-  greeting: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  level: {
-    fontSize: 14,
-    color: '#CFB53B',
-    marginTop: 2,
-  },
-  xpContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 12,
-    padding: 12,
-  },
-  xpLabelContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  xpLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  xpValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#CFB53B',
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#2C3E85',
-    marginBottom: 12,
-    marginTop: 20,
-    marginHorizontal: 16,
-  },
-  statsContainer: {
-    marginVertical: 16,
-  },
-  statsCard: {
-    marginHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#CFB53B',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#565B49',
-    textAlign: 'center',
-  },
-  divider: {
-    width: 1,
-    backgroundColor: '#E0D7C2',
-    marginHorizontal: 8,
-  },
-  missionsButton: {
-    alignSelf: 'center',
-    marginTop: 20,
-    minWidth: 150,
-  },
-});
