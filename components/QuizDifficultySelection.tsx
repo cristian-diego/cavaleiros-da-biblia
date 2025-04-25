@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { QuizDifficulty } from '../types/quiz';
 
@@ -13,28 +13,28 @@ const difficulties = [
     title: 'Fácil',
     icon: '🌱',
     description: 'Questões básicas para iniciantes',
-    color: '#4CAF50',
+    color: '#2ECC71',
   },
   {
     id: 'medium',
     title: 'Médio',
     icon: '🌳',
     description: 'Desafio moderado para quem já conhece a Bíblia',
-    color: '#FFC107',
+    color: '#FFD700',
   },
   {
     id: 'hard',
     title: 'Difícil',
     icon: '🌲',
     description: 'Questões complexas para especialistas',
-    color: '#F44336',
+    color: '#E74C3C',
   },
 ];
 
 export function QuizDifficultySelection({ onSelectDifficulty }: QuizDifficultySelectionProps) {
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.gradient}>
+      <LinearGradient colors={['#4A90E2', '#3B5998', '#192F6A']} style={styles.gradient}>
         <Text style={styles.title}>Escolha a Dificuldade</Text>
         <View style={styles.difficultiesContainer}>
           {difficulties.map((difficulty) => (
@@ -62,42 +62,47 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontFamily: 'Nunito-ExtraBold',
     color: 'white',
     textAlign: 'center',
     marginBottom: 30,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   difficultiesContainer: {
     gap: 20,
   },
   difficultyCard: {
     backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 20,
+    borderRadius: 20,
+    padding: 25,
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 3,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
     elevation: 5,
   },
   difficultyIcon: {
-    fontSize: 40,
-    marginBottom: 10,
+    fontSize: 50,
+    marginBottom: 15,
   },
   difficultyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontFamily: 'Nunito-Bold',
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 10,
+    textAlign: 'center',
   },
   difficultyDescription: {
-    fontSize: 14,
+    fontSize: 16,
+    fontFamily: 'Nunito-Regular',
     color: '#666',
     textAlign: 'center',
   },

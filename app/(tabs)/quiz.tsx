@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { QuizGame } from '../../components/QuizGame';
 import { QuizCategorySelection } from '../../components/QuizCategorySelection';
@@ -20,6 +20,8 @@ export default function QuizTab() {
     currentQuestionIndex: 0,
     completedCategories: [],
     achievements: [],
+    xp: 0,
+    isWin: false,
   });
 
   const handleCategorySelect = (category: QuizCategory) => {
@@ -44,7 +46,11 @@ export default function QuizTab() {
       currentQuestionIndex: 0,
       completedCategories: [],
       achievements: [],
+      xp: 0,
+      isWin: false,
     });
+    setSelectedCategory(null);
+    setSelectedDifficulty(null);
     setGameState('category');
   };
 
@@ -56,13 +62,25 @@ export default function QuizTab() {
     setGameState('achievements');
   };
 
-  const filteredQuestions = true
-    ? quizQuestions
-    : quizQuestions.filter(
-        (question) =>
-          (!selectedCategory || question.category === selectedCategory) &&
-          (!selectedDifficulty || question.difficulty === selectedDifficulty)
-      );
+  const filteredQuestions = quizQuestions.filter(
+    (question) =>
+      (!selectedCategory || question.category === selectedCategory) &&
+      (!selectedDifficulty || question.difficulty === selectedDifficulty)
+  );
+
+  useEffect(() => {
+    if (gameState === 'playing') {
+      setProgress({
+        score: 0,
+        lives: 3,
+        currentQuestionIndex: 0,
+        completedCategories: [],
+        achievements: [],
+        xp: 0,
+        isWin: false,
+      });
+    }
+  }, [selectedCategory, selectedDifficulty, gameState]);
 
   return (
     <View style={styles.container}>
@@ -80,6 +98,7 @@ export default function QuizTab() {
           onGameOver={handleGameOver}
           progress={progress}
           setProgress={setProgress}
+          onRestart={handleRestart}
         />
       )}
 

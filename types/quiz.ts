@@ -25,6 +25,8 @@ export interface QuizProgress {
   currentQuestionIndex: number;
   completedCategories: QuizCategory[];
   achievements: string[];
+  xp: number;
+  isWin: boolean;
 }
 
 export interface QuizAchievement {
