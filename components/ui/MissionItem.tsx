@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Check, CheckCircle } from 'lucide-react-native';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { Star, Award, Book, Heart, Shield } from 'lucide-react-native';
 import { Mission } from '@/types';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withSequence,
+  withDelay,
   interpolateColor,
 } from 'react-native-reanimated';
 
@@ -16,79 +18,106 @@ interface MissionItemProps {
 }
 
 const MissionItem: React.FC<MissionItemProps> = ({ mission, onComplete, disabled = false }) => {
-  const animatedValue = useSharedValue(mission.completed ? 1 : 0);
+  const scaleValue = useSharedValue(1);
+  const completedValue = useSharedValue(mission.completed ? 1 : 0);
+  const rotateValue = useSharedValue(0);
 
   const handleComplete = () => {
     if (disabled || mission.completed) return;
 
+    // Animate the card when completing
+    scaleValue.value = withSequence(withSpring(0.95), withSpring(1.05), withSpring(1));
+
+    // Rotate the star
+    rotateValue.value = withSequence(withSpring(1, { damping: 3 }), withDelay(300, withSpring(0)));
+
+    completedValue.value = withSpring(1, { damping: 15 });
     onComplete(mission.id);
-    animatedValue.value = withSpring(1, { damping: 15 });
   };
 
-  const animatedContainerStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: interpolateColor(animatedValue.value, [0, 1], ['#FFFFFF', '#F5F1EB']),
-    };
-  });
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleValue.value }],
+    backgroundColor: interpolateColor(completedValue.value, [0, 1], ['#FFFFFF', '#F0FFF4']),
+  }));
 
-  const animatedCheckStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: withSpring(animatedValue.value * 1 + 1) }],
-      opacity: withSpring(animatedValue.value),
-    };
-  });
+  const animatedStarStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: withSpring(completedValue.value * 0.3 + 1) },
+      { rotate: `${rotateValue.value * 360}deg` },
+    ],
+  }));
 
-  const getAttributeClasses = () => {
+  const getAttributeIcon = () => {
     switch (mission.attribute) {
       case 'faith':
-        return 'bg-[#E6E8F3] text-[#2C3E85]';
+        return <Heart size={16} color="#FF6B6B" />;
       case 'boldness':
-        return 'bg-[#ECEEE9] text-[#6B784D]';
+        return <Shield size={16} color="#4ECDC4" />;
       case 'wisdom':
-        return 'bg-[#F5EBBC] text-[#A6912F]';
+        return <Book size={16} color="#FFD93D" />;
+      default:
+        return null;
+    }
+  };
+
+  const getAttributeStyle = () => {
+    switch (mission.attribute) {
+      case 'faith':
+        return 'bg-red-50 text-red-500';
+      case 'boldness':
+        return 'bg-teal-50 text-teal-500';
+      case 'wisdom':
+        return 'bg-yellow-50 text-yellow-600';
       default:
         return '';
     }
   };
 
   return (
-    <Animated.View
-      className="shadow-offset-[0px/2px] shadow-opacity-10 shadow-radius-3 elevation-2 mb-3 flex-row rounded-xl bg-white p-4 shadow-sm shadow-black"
-      style={animatedContainerStyle}>
-      <View className="mr-3 flex-1">
-        <View className="mb-1.5 flex-row items-center justify-between">
-          <Text className="text-lg font-semibold text-[#2C3E85]">{mission.title}</Text>
-          <Text className="text-sm font-semibold text-[#CFB53B]">+{mission.xpReward} XP</Text>
+    <Pressable onPress={handleComplete} disabled={disabled || mission.completed}>
+      <Animated.View
+        className="mb-4 rounded-kid-lg bg-white p-4 shadow-sm"
+        style={animatedContainerStyle}>
+        {/* Header */}
+        <View className="mb-3 flex-row items-center justify-between">
+          <View className="flex-1">
+            <Text className="mb-1 text-kid-lg font-bold text-kid-blue">{mission.title}</Text>
+          </View>
+          <View className="flex-row items-center rounded-full bg-kid-yellow/10 px-3 py-1">
+            <Star size={16} color="#FFD700" className="mr-1" />
+            <Text className="font-bold text-kid-yellow">+{mission.xpReward}</Text>
+          </View>
         </View>
 
-        <Text className="mb-2 text-sm text-[#565B49]">{mission.description}</Text>
+        {/* Description */}
+        <Text className="mb-3 text-kid-base text-gray-600">{mission.description}</Text>
 
-        <View className="flex-row items-center">
-          <Text className="mr-1 text-xs text-[#8B877D]">Atributo:</Text>
-          <Text className={`rounded-lg px-2 py-0.5 text-xs font-semibold ${getAttributeClasses()}`}>
-            {mission.attribute === 'faith' && 'Fé'}
-            {mission.attribute === 'boldness' && 'Coragem'}
-            {mission.attribute === 'wisdom' && 'Sabedoria'}
-          </Text>
-        </View>
-      </View>
+        {/* Footer */}
+        <View className="flex-row items-center justify-between">
+          <View className={`flex-row items-center rounded-full px-3 py-1.5 ${getAttributeStyle()}`}>
+            {getAttributeIcon()}
+            <Text className={`ml-1.5 text-kid-sm font-semibold ${getAttributeStyle()}`}>
+              {mission.attribute === 'faith' && 'Fé'}
+              {mission.attribute === 'boldness' && 'Coragem'}
+              {mission.attribute === 'wisdom' && 'Sabedoria'}
+            </Text>
+          </View>
 
-      <TouchableOpacity
-        className={`h-10 w-10 items-center justify-center rounded-xl border-2 border-[#8F9779] ${
-          mission.completed ? 'border-[#8F9779] bg-[#ECEEE9]' : ''
-        } ${disabled ? 'opacity-50' : ''}`}
-        onPress={handleComplete}
-        disabled={disabled || mission.completed}
-        activeOpacity={0.7}>
-        {mission.completed ? (
-          <Animated.View style={animatedCheckStyle}>
-            <CheckCircle color="#8F9779" size={28} />
+          {/* Completion Status */}
+          <Animated.View style={animatedStarStyle}>
+            {mission.completed ? (
+              <View className="rounded-full bg-kid-green/10 p-2">
+                <Award size={24} color="#2ECC71" />
+              </View>
+            ) : (
+              <View className="rounded-full bg-gray-100 p-2">
+                <Star size={24} color="#CBD5E1" />
+              </View>
+            )}
           </Animated.View>
-        ) : (
-          <Check color="#8F9779" size={24} />
-        )}
-      </TouchableOpacity>
-    </Animated.View>
+        </View>
+      </Animated.View>
+    </Pressable>
   );
 };
 

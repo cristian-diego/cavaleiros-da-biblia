@@ -1,91 +1,147 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useMissionStore from '@/store/missionStore';
 import useUserStore from '@/store/userStore';
 import MissionItem from '@/components/ui/MissionItem';
-import Button from '@/components/ui/Button';
 import { Mission } from '@/types';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 import { router } from 'expo-router';
+import { Star, Award, Gift, Sparkles, Calendar, Trophy, Target } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Card from '@/components/ui/Card';
+
 export default function MissionsScreen() {
-  const { missions, completeMission, resetMissions } = useMissionStore();
-  const { user, addXp, reset } = useUserStore();
+  const { missions, completeMission } = useMissionStore();
+  const { user, addXp } = useUserStore();
   const [showingReward, setShowingReward] = useState<Mission | null>(null);
+  const insets = useSafeAreaInsets();
+
+  // Get current month name in Portuguese
+  const currentMonth = new Date().toLocaleString('pt-BR', { month: 'long' });
+
+  // Mock monthly stats (you should replace these with real data from your store)
+  const monthlyStats = {
+    completedDays: 15,
+    totalXP: 1250,
+    streak: 7,
+    achievements: 3,
+  };
 
   const handleCompleteMission = (id: string) => {
     const mission = missions.find((m) => m.id === id);
     if (!mission) return;
 
-    // Mark mission as completed
     completeMission(id);
-
-    // Award XP
     addXp(mission.xpReward, mission.attribute);
-
-    // Show reward notification
     setShowingReward(mission);
 
-    // Hide reward notification after 2 seconds
     setTimeout(() => {
       setShowingReward(null);
     }, 2000);
   };
 
-  const handleResetMissions = () => {
-    Alert.alert(
-      'Reiniciar Missões',
-      'Tem certeza que deseja reiniciar todas as missões? Isso vai apagar seu progresso de hoje.',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Sim, reiniciar',
-          onPress: () => resetMissions(),
-        },
-      ]
-    );
-  };
-
   const allCompleted = missions.every((mission) => mission.completed);
+  const completedCount = missions.filter((m) => m.completed).length;
+  const totalMissions = missions.length;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Missões Diárias</Text>
+    <SafeAreaView className="flex-1 bg-background">
+      <View className="flex-1">
+        {/* Header Section */}
+        <LinearGradient
+          colors={['#4A90E2', '#357ABD']}
+          className="rounded-b-kid-xl px-4 pb-6"
+          style={{ paddingTop: insets.top + 16 }}>
+          <View className="mb-4 flex-row items-center justify-between">
+            <View>
+              <Text className="text-kid-xl font-bold capitalize text-white">{currentMonth}</Text>
+              <View className="flex-row items-center">
+                <Calendar size={20} color="#FFD700" className="mr-2" />
+                <Text className="text-kid-base text-white">Dia {new Date().getDate()}</Text>
+              </View>
+            </View>
+            <View className="animate-bounce-soft">
+              <Star size={32} color="#FFD700" />
+            </View>
+          </View>
+
+          {/* Monthly Stats Cards */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-4">
+            <Card className="mr-3 min-w-[120px] bg-white/10 p-3">
+              <View className="items-center">
+                <Trophy size={24} color="#FFD700" />
+                <Text className="mt-2 text-kid-xl font-bold text-white">
+                  {monthlyStats.completedDays}
+                </Text>
+                <Text className="text-center text-kid-sm text-white/80">Dias{'\n'}Completados</Text>
+              </View>
+            </Card>
+
+            <Card className="mr-3 min-w-[120px] bg-white/10 p-3">
+              <View className="items-center">
+                <Target size={24} color="#FFD700" />
+                <Text className="mt-2 text-kid-xl font-bold text-white">{monthlyStats.streak}</Text>
+                <Text className="text-center text-kid-sm text-white/80">Dias{'\n'}Seguidos</Text>
+              </View>
+            </Card>
+
+            <Card className="mr-3 min-w-[120px] bg-white/10 p-3">
+              <View className="items-center">
+                <Award size={24} color="#FFD700" />
+                <Text className="mt-2 text-kid-xl font-bold text-white">
+                  {monthlyStats.totalXP}
+                </Text>
+                <Text className="text-center text-kid-sm text-white/80">XP{'\n'}do Mês</Text>
+              </View>
+            </Card>
+          </ScrollView>
+        </LinearGradient>
+
+        {/* Today's Missions Section */}
+        <View className="px-4 pt-6">
+          <View className="mb-4 flex-row items-center justify-between">
+            <Text className="text-kid-lg font-bold text-kid-blue">Missões de Hoje</Text>
+            <View className="flex-row items-center rounded-full bg-kid-yellow/10 px-3 py-1">
+              <Trophy size={16} color="#FFD700" className="mr-2" />
+              <Text className="font-semibold text-kid-yellow">
+                {completedCount}/{totalMissions}
+              </Text>
+            </View>
+          </View>
+
           {allCompleted && (
-            <Text style={styles.completedText}>
-              Parabéns! Você completou todas as missões de hoje!
-            </Text>
+            <View className="mb-4 rounded-kid bg-kid-green/10 p-3">
+              <View className="flex-row items-center justify-center">
+                <Sparkles size={20} color="#2ECC71" className="mr-2" />
+                <Text className="text-kid-base font-bold text-kid-green">
+                  Parabéns! Você completou todas as missões!
+                </Text>
+              </View>
+            </View>
           )}
+
+          <ScrollView
+            className="pt-2"
+            contentContainerClassName="pb-8"
+            showsVerticalScrollIndicator={false}>
+            {missions.map((mission) => (
+              <MissionItem key={mission.id} mission={mission} onComplete={handleCompleteMission} />
+            ))}
+          </ScrollView>
         </View>
-
-        <ScrollView
-          style={styles.missionsList}
-          contentContainerStyle={styles.missionsContent}
-          showsVerticalScrollIndicator={false}>
-          {missions.map((mission) => (
-            <MissionItem key={mission.id} mission={mission} onComplete={handleCompleteMission} />
-          ))}
-
-          <Button
-            title="Reiniciar Missões"
-            variant="outline"
-            onPress={handleResetMissions}
-            style={styles.resetButton}
-          />
-        </ScrollView>
 
         {/* XP Reward Notification */}
         {showingReward && (
           <Animated.View
             entering={FadeInDown.duration(300)}
             exiting={FadeOutUp.duration(300)}
-            style={styles.rewardContainer}>
-            <Text style={styles.rewardText}>+{showingReward.xpReward} XP</Text>
-            <Text style={styles.attributeText}>
+            className="absolute top-24 items-center self-center rounded-kid-lg bg-kid-yellow/90 p-4 shadow-lg">
+            <View className="mb-2 flex-row items-center">
+              <Gift size={24} color="#FFFFFF" className="mr-2" />
+              <Text className="text-kid-lg font-bold text-white">+{showingReward.xpReward} XP</Text>
+            </View>
+            <Text className="text-kid-base font-semibold text-white">
               +1{' '}
               {showingReward.attribute === 'faith'
                 ? 'Fé'
@@ -99,68 +155,3 @@ export default function MissionsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F5F1EB',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F1EB',
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 20,
-    backgroundColor: '#2C3E85',
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  completedText: {
-    fontSize: 16,
-    color: '#CFB53B',
-  },
-  missionsList: {
-    flex: 1,
-  },
-  missionsContent: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  resetButton: {
-    marginTop: 24,
-    alignSelf: 'center',
-  },
-  rewardContainer: {
-    position: 'absolute',
-    top: 100,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(207, 181, 59, 0.9)',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  rewardText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  attributeText: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-});
