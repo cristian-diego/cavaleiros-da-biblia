@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,13 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import useUserStore from '@/store/userStore';
-import Button from '@/components/ui/Button';
 import { Eye, EyeOff, Mail, Lock, User, ChevronLeft } from 'lucide-react-native';
+import KidButton from '@/components/ui/KidButton';
 
 interface ValidationErrors {
   name?: string;
@@ -34,6 +35,56 @@ export default function RegisterScreen() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const animateError = () => {
+    Animated.sequence([
+      Animated.timing(slideAnim, {
+        toValue: -20,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 20,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: -10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   const validateForm = () => {
     const newErrors: ValidationErrors = {};
@@ -115,137 +166,220 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-[#F5F1EB]"
+      className="flex-1 bg-background"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}>
       <ScrollView
         className="flex-1 pb-6"
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}>
-        <View className="items-center pb-10 pt-[60px]">
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          }}
+          className="items-center pb-10 pt-[60px]">
           <Link href="/login" asChild>
             <TouchableOpacity className="absolute left-6 top-6">
-              <ChevronLeft size={24} color="#2C3E85" />
+              <ChevronLeft size={28} color="#4A90E2" />
             </TouchableOpacity>
           </Link>
-          <Text className="mb-2 text-2xl font-bold text-[#2C3E85]">Criar Conta</Text>
-          <Text className="text-lg text-[#8F9779]">Junte-se à nossa comunidade!</Text>
-        </View>
+          <Image
+            source={{
+              uri: 'https://cdn-icons-png.flaticon.com/512/1024/1024109.png',
+            }}
+            className="mb-4 h-[120px] w-[120px]"
+          />
+          <Text className="mb-2 text-kid-2xl font-bold text-kid-blue">Cavaleiros da Bíblia</Text>
+          <Text className="text-kid-xl text-kid-purple">Vamos criar seu perfil de herói!</Text>
+        </Animated.View>
 
         <View className="px-6">
-          <View className="mb-4">
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="mb-4">
             <TextInput
-              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 text-base text-gray-800"
-              placeholder="Nome completo"
+              className="rounded-kid-xl border-2 border-kid-blue bg-white px-11 py-4 text-kid-base text-gray-800"
+              placeholder="Seu nome de herói"
               value={name}
               onChangeText={setName}
             />
-            <View className="absolute left-3 top-3">
-              <User size={20} color="#8B877D" />
+            <View className="absolute left-4 top-4">
+              <User size={24} color="#4A90E2" />
             </View>
-            {errors.name && <Text className="mt-1 text-sm text-red-600">{errors.name}</Text>}
-          </View>
+            {errors.name && (
+              <Animated.View
+                style={{
+                  transform: [{ translateX: slideAnim }],
+                }}
+                className="mt-2 rounded-kid bg-kid-red/10 p-2">
+                <Text className="text-kid-sm text-kid-red">{errors.name}</Text>
+              </Animated.View>
+            )}
+          </Animated.View>
 
-          <View className="relative mb-4">
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="mb-4">
             <TextInput
-              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 text-base text-gray-800"
-              placeholder="Email"
+              className="rounded-kid-xl border-2 border-kid-blue bg-white px-11 py-4 text-kid-base text-gray-800"
+              placeholder="Seu email mágico"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
             />
-
-            <View className="absolute left-3 top-3">
-              <Mail size={20} color="#8B877D" />
+            <View className="absolute left-4 top-4">
+              <Mail size={24} color="#4A90E2" />
             </View>
-            {errors.email && <Text className="mt-1 text-sm text-red-600">{errors.email}</Text>}
-          </View>
+            {errors.email && (
+              <Animated.View
+                style={{
+                  transform: [{ translateX: slideAnim }],
+                }}
+                className="mt-2 rounded-kid bg-kid-red/10 p-2">
+                <Text className="text-kid-sm text-kid-red">{errors.email}</Text>
+              </Animated.View>
+            )}
+          </Animated.View>
 
-          <View className="mb-4">
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="mb-4">
             <TextInput
-              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 pr-12 text-base text-gray-800"
-              placeholder="Senha"
+              className="rounded-kid-xl border-2 border-kid-blue bg-white px-11 py-4 pr-12 text-kid-base text-gray-800"
+              placeholder="Sua senha secreta"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <View className="absolute left-3 top-3">
-              <Lock size={20} color="#8B877D" />
+            <View className="absolute left-4 top-4">
+              <Lock size={24} color="#4A90E2" />
             </View>
-
             <TouchableOpacity
-              className="absolute right-3 top-3"
+              className="absolute right-4 top-4"
               onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? (
-                <EyeOff size={20} color="#8B877D" />
+                <EyeOff size={24} color="#4A90E2" />
               ) : (
-                <Eye size={20} color="#8B877D" />
+                <Eye size={24} color="#4A90E2" />
               )}
             </TouchableOpacity>
             {errors.password && (
-              <Text className="mt-1 text-sm text-red-600">{errors.password}</Text>
+              <Animated.View
+                style={{
+                  transform: [{ translateX: slideAnim }],
+                }}
+                className="mt-2 rounded-kid bg-kid-red/10 p-2">
+                <Text className="text-kid-sm text-kid-red">{errors.password}</Text>
+              </Animated.View>
             )}
-          </View>
+          </Animated.View>
 
-          <View className=" mb-4">
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="mb-4">
             <TextInput
-              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 pr-12 text-base text-gray-800"
-              placeholder="Confirmar senha"
+              className="rounded-kid-xl border-2 border-kid-blue bg-white px-11 py-4 pr-12 text-kid-base text-gray-800"
+              placeholder="Confirme sua senha secreta"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry={!showConfirmPassword}
             />
-            <View className="absolute left-3 top-3">
-              <Lock size={20} color="#8B877D" />
+            <View className="absolute left-4 top-4">
+              <Lock size={24} color="#4A90E2" />
             </View>
             <TouchableOpacity
-              className="absolute right-3 top-3"
+              className="absolute right-4 top-4"
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
               {showConfirmPassword ? (
-                <EyeOff size={20} color="#8B877D" />
+                <EyeOff size={24} color="#4A90E2" />
               ) : (
-                <Eye size={20} color="#8B877D" />
+                <Eye size={24} color="#4A90E2" />
               )}
             </TouchableOpacity>
             {errors.confirmPassword && (
-              <Text className="mt-1 text-sm text-red-600">{errors.confirmPassword}</Text>
+              <Animated.View
+                style={{
+                  transform: [{ translateX: slideAnim }],
+                }}
+                className="mt-2 rounded-kid bg-kid-red/10 p-2">
+                <Text className="text-kid-sm text-kid-red">{errors.confirmPassword}</Text>
+              </Animated.View>
             )}
-          </View>
+          </Animated.View>
 
-          <TouchableOpacity
-            className="mb-6 flex-row items-center"
-            onPress={() => setAcceptedTerms(!acceptedTerms)}>
-            <View
-              className={`mr-2 h-5 w-5 rounded border-2 ${
-                acceptedTerms ? 'border-[#2C3E85] bg-[#2C3E85]' : 'border-[#8B877D]'
-              }`}
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="mb-6">
+            <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => setAcceptedTerms(!acceptedTerms)}>
+              <View
+                className={`mr-2 h-6 w-6 rounded-full border-2 ${
+                  acceptedTerms ? 'border-kid-blue bg-kid-blue' : 'border-kid-purple'
+                }`}
+              />
+              <Text className="text-kid-base text-kid-purple">
+                Eu aceito as <Text className="font-bold text-kid-blue">Regras da Aventura</Text> e a{' '}
+                <Text className="font-bold text-kid-blue">Proteção Mágica</Text>
+              </Text>
+            </TouchableOpacity>
+            {errors.terms && (
+              <Animated.View
+                style={{
+                  transform: [{ translateX: slideAnim }],
+                }}
+                className="mt-2 rounded-kid bg-kid-red/10 p-2">
+                <Text className="text-center text-kid-sm text-kid-red">{errors.terms}</Text>
+              </Animated.View>
+            )}
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}>
+            <KidButton
+              title="Começar Aventura!"
+              onPress={handleRegister}
+              loading={loading}
+              variant="primary"
+              size="lg"
+              fullWidth
+              theme="kid-bible"
             />
-            <Text className="text-[#8B877D]">
-              Li e aceito os <Text className="font-semibold text-[#2C3E85]">Termos de Uso</Text> e a{' '}
-              <Text className="font-semibold text-[#2C3E85]">Política de Privacidade</Text>
-            </Text>
-          </TouchableOpacity>
-          {errors.terms && (
-            <Text className="mt-1 text-center text-sm text-red-600">{errors.terms}</Text>
-          )}
+          </Animated.View>
 
-          <Button
-            title="Criar Conta"
-            onPress={handleRegister}
-            loading={loading}
-            className="mb-6"
-            fullWidth
-          />
-
-          <View className="flex-row justify-center">
-            <Text className="text-[#8B877D]">Já tem uma conta? </Text>
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="flex-row justify-center">
+            <Text className="text-kid-base text-kid-purple">Já é um herói? </Text>
             <Link href="/login" asChild>
               <TouchableOpacity>
-                <Text className="font-semibold text-[#2C3E85]">Entrar</Text>
+                <Text className="text-kid-base font-bold text-kid-blue">Entre aqui!</Text>
               </TouchableOpacity>
             </Link>
-          </View>
+          </Animated.View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

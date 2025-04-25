@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,71 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import useUserStore from '@/store/userStore';
-import Button from '@/components/ui/Button';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react-native';
+import KidButton from '@/components/ui/KidButton';
 
 export default function LoginScreen() {
   const { setUser } = useUserStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const animateError = () => {
+    Animated.sequence([
+      Animated.timing(slideAnim, {
+        toValue: -20,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 20,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: -10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -76,126 +126,115 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-[#F5F1EB]"
+      className="flex-1 bg-background"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}>
       <ScrollView
         className="flex-1 pb-6"
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}>
-        <View className="items-center pb-10 pt-[60px]">
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          }}
+          className="items-center pb-10 pt-[60px]">
           <Image
             source={{
-              uri: 'https://images.pexels.com/photos/4240498/pexels-photo-4240498.jpeg?auto=compress&cs=tinysrgb&w=300',
+              uri: 'https://cdn-icons-png.flaticon.com/512/1024/1024109.png',
             }}
-            className="mb-4 h-[100px] w-[100px] rounded-full"
+            className="mb-4 h-[120px] w-[120px]"
           />
-          <Text className="mb-2 text-2xl font-bold text-[#2C3E85]">Guardiões da Verdade</Text>
-          <Text className="text-lg text-[#8F9779]">Bem-vindo de volta!</Text>
-        </View>
+          <Text className="mb-2 text-kid-2xl font-bold text-kid-blue">Cavaleiros da Bíblia</Text>
+          <Text className="text-kid-xl text-kid-purple">Vamos começar a aventura!</Text>
+        </Animated.View>
 
         <View className="px-6">
-          {error && <Text className="mb-4 text-center text-sm text-red-600">{error}</Text>}
+          {error && (
+            <Animated.View
+              style={{
+                transform: [{ translateX: slideAnim }],
+              }}
+              className="mb-4 rounded-kid bg-kid-red/10 p-3">
+              <Text className="text-center text-kid-sm text-kid-red">{error}</Text>
+            </Animated.View>
+          )}
 
-          <View className="mb-4 flex-1 ">
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="mb-4">
             <TextInput
-              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 text-base text-gray-800"
-              placeholder="Email"
+              className="rounded-kid-xl border-2 border-kid-blue bg-white px-11 py-4 text-kid-base text-gray-800"
+              placeholder="Seu email mágico"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
             />
-
-            <View className="absolute left-3 top-3">
-              <Mail size={20} color="#8B877D" />
+            <View className="absolute left-4 top-4">
+              <Mail size={24} color="#4A90E2" />
             </View>
-          </View>
+          </Animated.View>
 
-          <View className="relative mb-4">
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="relative mb-6">
             <TextInput
-              className="rounded-xl border border-[#E0D7C2] bg-white px-11 py-3 pr-12 text-base text-gray-800"
-              placeholder="Senha"
+              className="rounded-kid-xl border-2 border-kid-blue bg-white px-11 py-4 pr-12 text-kid-base text-gray-800"
+              placeholder="Sua senha secreta"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <View className="absolute left-3 top-3">
-              <Lock size={20} color="#8B877D" className="absolute left-3 top-3" />
+            <View className="absolute left-4 top-4">
+              <Lock size={24} color="#4A90E2" />
             </View>
-
             <TouchableOpacity
-              className="absolute right-3 top-3"
+              className="absolute right-4 top-4"
               onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? (
-                <EyeOff size={20} color="#8B877D" />
+                <EyeOff size={24} color="#4A90E2" />
               ) : (
-                <Eye size={20} color="#8B877D" />
+                <Eye size={24} color="#4A90E2" />
               )}
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
-          <View className="mb-6 flex-row items-center justify-between">
-            <TouchableOpacity
-              className="flex-row items-center"
-              onPress={() => setRememberMe(!rememberMe)}>
-              <View
-                className={`mr-2 h-5 w-5 rounded border-2 ${
-                  rememberMe ? 'border-[#2C3E85] bg-[#2C3E85]' : 'border-[#8B877D]'
-                }`}
-              />
-              <Text className="text-[#8B877D]">Lembrar-me</Text>
-            </TouchableOpacity>
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}>
+            <KidButton
+              title="Entrar na Aventura!"
+              onPress={handleLogin}
+              loading={loading}
+              variant="primary"
+              size="lg"
+              fullWidth
+              theme="kid-bible"
+            />
+          </Animated.View>
 
-            <TouchableOpacity>
-              <Text className="text-[#2C3E85]">Esqueceu a senha?</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Button
-            title="Entrar"
-            onPress={handleLogin}
-            loading={loading}
-            className="mb-6"
-            fullWidth
-          />
-
-          <View className="mb-6 flex-row items-center">
-            <View className="h-px flex-1 bg-[#E0D7C2]" />
-            <Text className="mx-4 text-[#8B877D]">ou continue com</Text>
-            <View className="h-px flex-1 bg-[#E0D7C2]" />
-          </View>
-
-          <View className="mb-6 flex-row justify-center space-x-4">
-            <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-white">
-              <Image
-                source={{
-                  uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
-                }}
-                className="h-6 w-6"
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-white">
-              <Image
-                source={{
-                  uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png',
-                }}
-                className="h-6 w-6"
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View className="flex-row justify-center">
-            <Text className="text-[#8B877D]">Não tem uma conta? </Text>
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }}
+            className="flex-row justify-center">
+            <Text className="text-kid-base text-kid-purple">Novo por aqui? </Text>
             <Link href="/register" asChild>
               <TouchableOpacity>
-                <Text className="font-semibold text-[#2C3E85]">Registre-se</Text>
+                <Text className="text-kid-base font-bold text-kid-blue">Junte-se a nós!</Text>
               </TouchableOpacity>
             </Link>
-          </View>
+          </Animated.View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
