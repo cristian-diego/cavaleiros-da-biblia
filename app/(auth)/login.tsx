@@ -207,6 +207,7 @@ export default function LoginScreen() {
           </Animated.View>
 
           <Animated.View
+            className="mb-6"
             style={{
               opacity: fadeAnim,
               transform: [{ translateY: slideAnim }],

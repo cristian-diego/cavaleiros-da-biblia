@@ -352,6 +352,7 @@ export default function RegisterScreen() {
           </Animated.View>
 
           <Animated.View
+            className="mb-6"
             style={{
               opacity: fadeAnim,
               transform: [{ translateY: slideAnim }],
