@@ -101,7 +101,7 @@ export default function LoginScreen() {
         if (profile) {
           setUser({
             id: profile.id,
-            name: profile.name,
+            name: profile.username,
             avatar: profile.avatar_url,
             xp: profile.xp || 0,
             level: profile.level || 1,
