@@ -2,13 +2,19 @@ import { Redirect } from 'expo-router';
 import { useAuthStore } from '@/store/authStore';
 import useUserStore from '@/store/userStore';
 import { supabase } from '@/lib/supabase';
+import useOnboardingStore from '@/store/onboardingStore';
 
 export default async function Index() {
   const { session, loading } = useAuthStore();
   const { user, setUser } = useUserStore();
+  const { hasSeenOnboarding } = useOnboardingStore();
 
   if (loading) {
     return null;
+  }
+
+  if (!hasSeenOnboarding) {
+    return <Redirect href="/onboarding" />;
   }
 
   if (!session) {
