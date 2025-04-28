@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Home, Award, BookOpen, User } from 'lucide-react-native';
+import { Home, Award, BookOpen, User, Trophy } from 'lucide-react-native';
 import { View } from 'react-native';
 
 export default function TabLayout() {
@@ -59,6 +59,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="rankings"
+        options={{
+          title: 'Ranking',
+          tabBarIcon: ({ color, size }) => (
+            <View style={{ backgroundColor: '#FFF5F5', padding: 8, borderRadius: 12 }}>
+              <Trophy size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="card"
         options={{
           title: 'Cartão',
@@ -69,7 +80,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="profile"
         options={{
           title: 'Perfil',
@@ -79,7 +90,7 @@ export default function TabLayout() {
             </View>
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="quiz"
         options={{
