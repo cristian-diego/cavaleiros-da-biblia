@@ -4,6 +4,7 @@
     "slug": "cavaleiros-da-biblia",
     "version": "1.0.0",
     "scheme": "cavaleiros-da-biblia",
+    "newArchEnabled": false,
     "web": {
       "bundler": "metro",
       "output": "static",

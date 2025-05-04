@@ -53,7 +53,7 @@ export default function RankingsScreen() {
       </View>
 
       <View className="py-4">
-        <Carousel
+        {/* <Carousel
           data={leagues}
           renderItem={renderLeagueCard}
           sliderWidth={screenWidth}
@@ -62,7 +62,7 @@ export default function RankingsScreen() {
           inactiveSlideScale={0.9}
           inactiveSlideOpacity={0.7}
           firstItem={1}
-        />
+        /> */}
       </View>
 
       <ScrollView className="flex-1 p-4">
