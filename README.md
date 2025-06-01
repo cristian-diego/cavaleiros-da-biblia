@@ -1,6 +1,6 @@
 # Cavaleiros da Bíblia - Quiz Game
 
-Um jogo educativo de quiz bíblico desenvolvido com React Native e Expo, inspirado no estilo do Duolingo.
+Um jogo educativo de quiz bíblico desenvolvido com React Native e Expo, inspirado no estilo do Duolingo. (Gerado grande parte usando Bolt.New & Cursor AI for improvements)
 
 ## Características
 
@@ -109,20 +109,9 @@ Para adicionar novas perguntas, edite o arquivo `data/quizQuestions.ts`. Cada pe
 }
 ```
 
-## Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ## Contato
 
-Seu Nome - [@seu-twitter](https://twitter.com/seu-twitter) - email@exemplo.com
+Seu Nome - [@CristianDevBR](https://x.com/CristianDevBR) - cristianqibins@hotmail.com
 
-Link do Projeto: [https://github.com/seu-usuario/cavaleiros-da-biblia](https://github.com/seu-usuario/cavaleiros-da-biblia)
+Link do Projeto: [cavaleiros-da-biblia](https://github.com/cristian-diego/cavaleiros-da-biblia)
